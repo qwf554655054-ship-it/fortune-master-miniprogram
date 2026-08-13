@@ -585,6 +585,25 @@ function buildShareCard(b) {
   el('bazi-result').appendChild(holder);
 }
 
+// ===== 合规：免责声明弹层 + 未成年人首访提示 =====
+function setupCompliance() {
+  const link = el('disclaimer-link');
+  const modal = el('disclaimer-modal');
+  const close = el('disclaimer-close');
+  if (link && modal && close) {
+    link.addEventListener('click', () => modal.classList.remove('hidden'));
+    close.addEventListener('click', () => modal.classList.add('hidden'));
+    modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.add('hidden'); });
+  }
+  const notice = el('minor-notice');
+  const ok = el('minor-ok');
+  if (notice && ok) {
+    if (!localStorage.getItem('fm_minor_ok')) notice.classList.remove('hidden');
+    ok.addEventListener('click', () => { notice.classList.add('hidden'); localStorage.setItem('fm_minor_ok', '1'); });
+  }
+}
+setupCompliance();
+
 // 初始化加载记录
 loadHistory();
 loadFavorites();

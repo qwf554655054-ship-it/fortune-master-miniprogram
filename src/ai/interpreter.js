@@ -96,6 +96,10 @@ function ruleZodiac(data, question) {
       ? '贵人运强，宜主动链接人脉、推进合作与情感关系，把握窗口期。'
       : '整体平稳，按部就班即可，留意健康与小额财务。';
   sections.push({ title: '建议', content: advice });
+  sections.push({
+    title: '声明',
+    content: '以上为生肖流年的趣味性推演，仅供娱乐与自我觉察，不构成任何专业建议；人生走向仍取决于你的选择与行动。',
+  });
   return sections;
 }
 
@@ -112,6 +116,10 @@ function ruleTarot(data, question) {
     title: '综合提示',
     content:
       '塔罗是照见内心与潜意识的镜子。正位多指顺势与显意识，逆位提示被忽略或被压抑的部分。请结合自身处境取用，勿过度执着单一牌义。',
+  });
+  sections.push({
+    title: '声明',
+    content: '塔罗结果仅供娱乐与自我觉察，不构成任何专业建议；如遇现实困扰，请咨询具备资质的专业人士。',
   });
   return sections;
 }
@@ -187,6 +195,10 @@ function ruleDaily(data, question) {
   sections.push({
     title: '小贴士',
     content: `今日冲${chongZodiac}。幸运色：${luckyColor}；幸运数字：${luckyNumber}（趣味参考）。`,
+  });
+  sections.push({
+    title: '声明',
+    content: '每日运势为趣味参考，不构成任何专业建议；健康与重要决策请以现实情况为准。',
   });
   return sections;
 }

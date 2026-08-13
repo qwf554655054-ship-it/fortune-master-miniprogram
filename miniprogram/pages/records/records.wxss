@@ -62,3 +62,11 @@
   color: #7d6e58;
   font-size: 22rpx;
 }
+
+.about-entry {
+  margin-top: 40rpx;
+  text-align: center;
+  color: #c79a4b;
+  font-size: 26rpx;
+  text-decoration: underline;
+}

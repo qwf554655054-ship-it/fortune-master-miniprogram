@@ -1,0 +1,13 @@
+<view class="page">
+  <view class="title">免责声明</view>
+
+  <view class="block">
+    <view class="p">1. 本应用所有内容（八字、紫微、生肖、塔罗、六爻、奇门、风水、合盘、年运等）均基于传统民俗文化与公开算法的<text class="hl">趣味推演</text>，仅供娱乐与自我觉察，<text class="hl">不构成任何医疗、法律、财务或人生决策建议</text>。</view>
+    <view class="p">2. 本应用<text class="hl">不提供</text>任何形式的付费改运、消灾、转运服务。任何以"改运"为名收费的行为均与本应用无关，请提高警惕、谨防诈骗。</view>
+    <view class="p">3. 未成年人的身心健康与成长至关重要，本应用<text class="hl">建议未成年人在家长或监护人指导下使用</text>，且结果不应被当作严肃指引。</view>
+    <view class="p">4. 你在本应用产生的历史与收藏记录仅保存在当前设备对应的本地存储中（按设备安装标识隔离），不会上传用于商业目的；你可以在"我的"中随时删除。</view>
+    <view class="p">5. 人生走向取决于你自己的选择与行动。如遇健康、法律、财务等现实问题，请务必咨询具备资质的专业人士。</view>
+  </view>
+
+  <button class="back" bindtap="goBack">返回</button>
+</view>

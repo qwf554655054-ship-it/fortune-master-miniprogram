@@ -1,0 +1,26 @@
+.block {
+  background: #2a2014;
+  border: 1rpx solid #4a3a26;
+  border-radius: 16rpx;
+  padding: 26rpx 24rpx;
+}
+
+.p {
+  font-size: 27rpx;
+  line-height: 1.85;
+  color: #ece3d4;
+  margin-bottom: 22rpx;
+}
+
+.hl {
+  color: #e8c477;
+  font-weight: 600;
+}
+
+.back {
+  margin-top: 36rpx;
+  background: linear-gradient(160deg, #e8c477, #c9993f);
+  color: #2b2118;
+  font-weight: 700;
+  border-radius: 16rpx;
+}

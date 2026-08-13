@@ -2,7 +2,8 @@
   "pages": [
     "pages/index/index",
     "pages/calc/calc",
-    "pages/records/records"
+    "pages/records/records",
+    "pages/about/about"
   ],
   "window": {
     "navigationBarBackgroundColor": "#2b2118",

@@ -29,4 +29,6 @@
       <view class="item-time">{{item.createdAt}}</view>
     </view>
   </block>
+
+  <view class="about-entry" bindtap="goAbout">查看免责声明</view>
 </view>

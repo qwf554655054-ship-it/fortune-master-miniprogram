@@ -39,5 +39,9 @@ Page({
     request('/api/user/favorites/' + id, 'DELETE')
       .then(() => this.loadAll())
       .catch((err) => this.setData({ error: (err && err.message) || '删除失败' }));
+  },
+
+  goAbout() {
+    wx.navigateTo({ url: '/pages/about/about' });
   }
 });
