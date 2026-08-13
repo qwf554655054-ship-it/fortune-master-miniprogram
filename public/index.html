@@ -9,13 +9,16 @@
 <body>
   <header class="app-header">
     <h1>命理测算</h1>
-    <p class="subtitle">八字排盘 · 生肖运势 · 塔罗占卜</p>
+    <p class="subtitle">八字 · 紫微 · 生肖 · 日运 · 数秘 · 塔罗</p>
     <p class="disclaimer">本工具仅供娱乐与自我觉察，不构成任何专业建议。</p>
   </header>
 
   <nav class="tabs">
     <button class="tab active" data-tab="bazi">八字排盘</button>
+    <button class="tab" data-tab="ziwei">紫微斗数</button>
     <button class="tab" data-tab="zodiac">生肖运势</button>
+    <button class="tab" data-tab="daily">每日运势</button>
+    <button class="tab" data-tab="numerology">数字命理</button>
     <button class="tab" data-tab="tarot">塔罗占卜</button>
   </nav>
 
@@ -42,6 +45,38 @@
         <button class="primary" id="zodiac-btn">查看运势</button>
       </div>
       <div class="result" id="zodiac-result"></div>
+    </section>
+
+    <!-- 紫微 -->
+    <section class="panel" id="panel-ziwei">
+      <div class="form">
+        <label>出生日期<input type="date" id="ziwei-date" value="1990-05-20" /></label>
+        <label>出生时间<input type="time" id="ziwei-time" value="14:30" /></label>
+        <label>性别
+          <select id="ziwei-gender"><option value="male">男</option><option value="female">女</option></select>
+        </label>
+        <button class="primary" id="ziwei-btn">开始排盘</button>
+      </div>
+      <div class="result" id="ziwei-result"></div>
+    </section>
+
+    <!-- 每日运势 -->
+    <section class="panel" id="panel-daily">
+      <div class="form">
+        <label>出生年份<input type="number" id="daily-year" value="1990" min="1900" max="2100" /></label>
+        <label>查看日期（留空为今天）<input type="date" id="daily-date" /></label>
+        <button class="primary" id="daily-btn">查看今日运势</button>
+      </div>
+      <div class="result" id="daily-result"></div>
+    </section>
+
+    <!-- 数字命理 -->
+    <section class="panel" id="panel-numerology">
+      <div class="form">
+        <label>出生日期<input type="date" id="numerology-date" value="1990-05-20" /></label>
+        <button class="primary" id="numerology-btn">计算灵数</button>
+      </div>
+      <div class="result" id="numerology-result"></div>
     </section>
 
     <!-- 塔罗 -->

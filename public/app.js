@@ -113,7 +113,92 @@ el('zodiac-btn').addEventListener('click', async () => {
   }
 });
 
-// ===== 塔罗 =====
+// ===== 紫微斗数 =====
+function renderChartResult(out, title, bodyHTML) {
+  out.innerHTML = '';
+  const c = document.createElement('div');
+  c.className = 'card';
+  c.innerHTML = `<h3>${esc(title)}</h3>${bodyHTML}`;
+  out.appendChild(c);
+}
+el('ziwei-btn').addEventListener('click', async () => {
+  const out = el('ziwei-result');
+  out.innerHTML = '<div class="card"><p>排盘中…</p></div>';
+  const date = el('ziwei-date').value;
+  if (!date) { renderError(out, '请选择出生日期'); return; }
+  const [year, month, day] = date.split('-').map(Number);
+  const time = el('ziwei-time').value || '00:00';
+  const [hour, minute] = time.split(':').map(Number);
+  try {
+    const z = await postJSON('/api/ziwei', { year, month, day, hour, minute, gender: el('ziwei-gender').value });
+    if (!z.ok) { renderError(out, z.error); return; }
+    const d = z.data;
+    const starsHTML = Object.entries(d.stars).map(([s, p]) => `<span class="dy">${s}·${p}</span>`).join('');
+    renderChartResult(out, `${d.meta.gender}命 · ${d.xingWuju} · 紫微在${d.ziweiAt}`,
+      `<p style="margin-top:8px">命宫 ${d.mingGong.ganzhi}（${d.palaces[0].mainStars.join('、') || '无主星'}）· 身宫 ${d.shenGong.ganzhi}</p>
+       <div class="dayun" style="margin-top:8px">${starsHTML}</div>
+       <p class="legend" style="margin-top:8px">${esc(d.note)}</p>`);
+    const rc = document.createElement('div');
+    rc.className = 'card';
+    rc.innerHTML = '<h3>命理解读</h3><p>生成中…</p>';
+    out.appendChild(rc);
+    const reading = await postJSON('/api/reading', { system: 'ziwei', data: d });
+    if (reading.ok) renderSections(rc, reading.data.sections);
+  } catch (e) { renderError(out, '请求失败：' + e.message); }
+});
+
+// ===== 每日运势 =====
+el('daily-btn').addEventListener('click', async () => {
+  const out = el('daily-result');
+  out.innerHTML = '<div class="card"><p>计算中…</p></div>';
+  const year = Number(el('daily-year').value);
+  if (!year) { renderError(out, '请输入出生年份'); return; }
+  const date = el('daily-date').value || undefined;
+  try {
+    const z = await postJSON('/api/daily', date ? { year, date } : { year });
+    if (!z.ok) { renderError(out, z.error); return; }
+    const d = z.data;
+    const cls = d.rating === '优' ? 'he' : d.rating === '慎' ? 'chong' : 'ping';
+    out.innerHTML = '';
+    const c = document.createElement('div');
+    c.className = 'card';
+    c.innerHTML = `<h3>${d.meta.date} · ${d.meta.lunarDate}</h3>
+      <p><span class="tag ${cls}">${d.relation}</span> ${d.detail}</p>
+      <p class="legend" style="margin-top:8px">${d.dayGanZhi}日（冲${d.chongZodiac}）· 幸运色 ${d.luckyColor} · 幸运数字 ${d.luckyNumber}</p>`;
+    out.appendChild(c);
+    const rc = document.createElement('div');
+    rc.className = 'card';
+    rc.innerHTML = '<h3>运势解读</h3><p>生成中…</p>';
+    out.appendChild(rc);
+    const reading = await postJSON('/api/reading', { system: 'daily', data: d });
+    if (reading.ok) renderSections(rc, reading.data.sections);
+  } catch (e) { renderError(out, '请求失败：' + e.message); }
+});
+
+// ===== 数字命理 =====
+el('numerology-btn').addEventListener('click', async () => {
+  const out = el('numerology-result');
+  out.innerHTML = '<div class="card"><p>计算中…</p></div>';
+  const date = el('numerology-date').value;
+  if (!date) { renderError(out, '请选择出生日期'); return; }
+  const [year, month, day] = date.split('-').map(Number);
+  try {
+    const z = await postJSON('/api/numerology', { year, month, day });
+    if (!z.ok) { renderError(out, z.error); return; }
+    const d = z.data;
+    out.innerHTML = '';
+    const c = document.createElement('div');
+    c.className = 'card';
+    c.innerHTML = `<h3>生命灵数 ${d.lifePath.number}</h3><p>${esc(d.lifePath.meaning)}</p>`;
+    out.appendChild(c);
+    const rc = document.createElement('div');
+    rc.className = 'card';
+    rc.innerHTML = '<h3>数字解读</h3><p>生成中…</p>';
+    out.appendChild(rc);
+    const reading = await postJSON('/api/reading', { system: 'numerology', data: d });
+    if (reading.ok) renderSections(rc, reading.data.sections);
+  } catch (e) { renderError(out, '请求失败：' + e.message); }
+});
 el('tarot-btn').addEventListener('click', async () => {
   const out = el('tarot-result');
   out.innerHTML = '<div class="card"><p>洗牌中…</p></div>';

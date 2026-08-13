@@ -7,6 +7,9 @@ const assert = require('assert');
 const { calculateBAZI } = require('../src/pan/bazi');
 const { calculateZodiac } = require('../src/pan/zodiac');
 const { drawTarot } = require('../src/pan/tarot');
+const { calculateZiwei } = require('../src/pan/ziwei');
+const { calculateNumerology } = require('../src/pan/numerology');
+const { calculateDaily } = require('../src/pan/daily');
 const { generateReading } = require('../src/ai/interpreter');
 
 let pass = 0, fail = 0;
@@ -54,6 +57,46 @@ async function main() {
     assert.strictEqual(t.cards.length, 3);
     assert.deepStrictEqual(t.cards.map((c) => c.position), ['过去', '现在', '未来']);
     t.cards.forEach((c) => assert.ok(c.name && c.orientation && c.meaning));
+  });
+
+  await test('紫微：十四主星齐全且十二宫完整', () => {
+    const z = calculateZiwei({ year: 1990, month: 5, day: 20, hour: 14, gender: 'male' });
+    assert.strictEqual(z.palaces.length, 12);
+    assert.ok(/局$/.test(z.xingWuju), '五行局格式应为 X局');
+    assert.ok(z.mingGong.ganzhi.length === 2);
+    const stars = Object.keys(z.stars);
+    assert.strictEqual(stars.length, 14, '应安放 14 颗主星');
+    ['紫微', '天府', '天机', '七杀', '破军'].forEach((s) => assert.ok(stars.includes(s)));
+    // 主星分布恰好覆盖 12 宫
+    const zhiSet = new Set(Object.values(z.stars));
+    assert.ok(zhiSet.size >= 10, '主星应散布于多个宫位');
+  });
+
+  await test('数字命理：1990-05-20 生命灵数为 8', () => {
+    const n = calculateNumerology({ year: 1990, month: 5, day: 20 });
+    assert.strictEqual(n.lifePath.number, 8);
+    assert.ok(n.lifePath.meaning.length > 0);
+    assert.ok(n.talent.length === 2);
+  });
+
+  await test('每日运势：返回冲合关系与评级', () => {
+    const d = calculateDaily({ year: 1990 });
+    assert.strictEqual(d.birthZodiac, '马');
+    assert.ok(['优', '吉', '平', '慎'].includes(d.rating));
+    assert.ok(d.dayGanZhi.length === 2);
+    assert.ok(d.detail.length > 0);
+  });
+
+  await test('解读层：新体系（紫微/数秘/日运）均返回段落', async () => {
+    const z = calculateZiwei({ year: 1990, month: 5, day: 20, hour: 14 });
+    const rz = await generateReading({ system: 'ziwei', data: z });
+    assert.ok(rz.sections.length >= 3, '紫微解读至少 3 段');
+    const n = calculateNumerology({ year: 1990, month: 5, day: 20 });
+    const rn = await generateReading({ system: 'numerology', data: n });
+    assert.ok(rn.sections.length >= 3);
+    const d = calculateDaily({ year: 1990 });
+    const rd = await generateReading({ system: 'daily', data: d });
+    assert.ok(rd.sections.length >= 1);
   });
 
   await test('解读层：八字规则解读生成结构化段落', async () => {

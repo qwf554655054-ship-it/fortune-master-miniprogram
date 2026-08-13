@@ -6,6 +6,7 @@
  * 默认走规则模板（零依赖、可离线）；配置了 LLM 环境变量后自动切换为 LLM 解读。
  */
 const knowledge = require('../knowledge');
+const { callLLM } = require('./llm');
 
 const WUXING_COLOR = { 木: '青绿', 火: '红', 土: '黄', 金: '白', 水: '黑' };
 const WUXING_DIR = { 木: '东', 火: '南', 土: '中', 金: '西', 水: '北' };
@@ -115,56 +116,96 @@ function ruleTarot(data, question) {
   return sections;
 }
 
+function ruleZiwei(data, question) {
+  const sections = [];
+  const { xingWuju, mingGong, shenGong, ziweiAt, palaces } = data;
+  const mingPalace = palaces[0];
+  sections.push({
+    title: '总断',
+    content: `${xingWuju}，命宫坐${mingGong.ganzhi}，紫微星在${ziweiAt}。命宫主星：${mingPalace.mainStars.join('、') || '（无主星，借对宫）'}。身宫在${shenGong.ganzhi}。`,
+  });
+  sections.push({
+    title: '十二宫主星',
+    content: palaces.map((p) => `${p.name}(${p.ganzhi})：${p.mainStars.join('、') || '—'}`).join('\n'),
+  });
+  const mingStars = mingPalace.mainStars;
+  let trait = '命宫无主星（借对宫论断），性格随环境调节明显。';
+  const TRAITS = [
+    ['紫微', '有领导气质与自尊心，重体面、有担当。'],
+    ['天机', '聪慧善谋，反应快，喜变动与学习。'],
+    ['太阳', '热情开朗，乐于助人，重视名誉。'],
+    ['武曲', '刚毅务实，执行力强，理财观念好。'],
+    ['天同', '随和乐观，福气佳，但稍显安逸。'],
+    ['廉贞', '进取心强，重情也重原则，魄力足。'],
+    ['天府', '稳重守成，善于经营，重享受但不逾矩。'],
+    ['太阴', '温和细腻，内敛感性，重家庭与情感。'],
+    ['贪狼', '多才多艺，交际广，欲望与行动力并存。'],
+    ['巨门', '口才佳、心思细，需注意言语分寸。'],
+    ['天相', '温文有礼，协调力强，是得力的辅助者。'],
+    ['天梁', '稳重有担当，常为他人操心，有贵人特质。'],
+    ['七杀', '果断敢冲，性格刚烈，适合开创性事务。'],
+    ['破军', '敢破敢立，变动大，行动力与爆发力强。'],
+  ];
+  for (const [star, text] of TRAITS) {
+    if (mingStars.includes(star)) { trait = text; break; }
+  }
+  sections.push({ title: '性格', content: trait });
+  sections.push({
+    title: '建议',
+    content: '以上为简版紫微（仅十四主星）的趣味参考。完整论断需辅星、四化与流年结合；人生走向仍取决于你的选择与行动。',
+  });
+  return sections;
+}
+
+function ruleNumerology(data, question) {
+  const { lifePath, talent, birthday, missing } = data;
+  const sections = [];
+  sections.push({
+    title: '总断',
+    content: `生命灵数（主数）为 ${lifePath.number}：${lifePath.meaning}`,
+  });
+  sections.push({
+    title: '天赋数',
+    content: talent.map((t) => `天赋 ${t.number}：${t.meaning}`).join('\n'),
+  });
+  sections.push({ title: '生日数', content: `生日数 ${birthday.number}：${birthday.meaning}` });
+  sections.push({
+    title: '缺失数',
+    content: missing.length ? `出生日期中未出现的数字：${missing.join('、')}（可作为兴趣拓展的方向，仅供参考）` : '出生日期 0-9 齐全，能量较均衡。',
+  });
+  sections.push({ title: '建议', content: '数字命理是自我觉察的工具，用于了解倾向而非贴标签；请结合实际生活理性看待。' });
+  return sections;
+}
+
+function ruleDaily(data, question) {
+  const { birthZodiac, dayGanZhi, dayZodiac, chongZodiac, relation, rating, detail, luckyColor, luckyNumber } = data;
+  const sections = [];
+  sections.push({
+    title: '今日概览',
+    content: `${birthZodiac}年生的你，${data.meta.date}（${dayGanZhi}日，${dayZodiac}日）运势【${rating}】：「${relation}」。${detail}`,
+  });
+  sections.push({
+    title: '小贴士',
+    content: `今日冲${chongZodiac}。幸运色：${luckyColor}；幸运数字：${luckyNumber}（趣味参考）。`,
+  });
+  return sections;
+}
+
 function ruleGenerate(system, data, question) {
   if (system === 'bazi') return ruleBazi(data, question);
+  if (system === 'ziwei') return ruleZiwei(data, question);
   if (system === 'zodiac') return ruleZodiac(data, question);
+  if (system === 'daily') return ruleDaily(data, question);
   if (system === 'tarot') return ruleTarot(data, question);
+  if (system === 'numerology') return ruleNumerology(data, question);
   return [{ title: '提示', content: '该体系暂仅支持规则解读。' }];
 }
 
-async function llmGenerate(system, data, question) {
-  const apiKey = process.env.LLM_API_KEY;
-  const apiUrl = process.env.LLM_API_URL;
-  const model = process.env.LLM_MODEL || 'default';
-  if (!apiKey || !apiUrl) return null;
-  const pack = knowledge.buildKnowledgePack(system);
-  const userText =
-    `【用户问题】${question || '（无）'}\n【测算数据 JSON】\n${JSON.stringify(data, null, 2)}\n` +
-    `请严格依据知识框架与安全护栏，输出有层次、像真人老师般的中文解读（总断/分领域/建议）。`;
-  try {
-    const resp = await fetch(apiUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
-      body: JSON.stringify({
-        model,
-        messages: [
-          { role: 'system', content: `你是专业的命理解读师。\n${pack}` },
-          { role: 'user', content: userText },
-        ],
-        temperature: 0.7,
-      }),
-    });
-    if (!resp.ok) return null;
-    const json = await resp.json();
-    const text = json.choices?.[0]?.message?.content || json.content || '';
-    if (!text) return null;
-    // 简单切分标题
-    const sections = text
-      .split(/\n+(#{1,3}\s*|【|\[)/)
-      .map((s) => s.trim())
-      .filter(Boolean)
-      .map((s) => ({ title: '解读', content: s }));
-    return sections.length ? sections : [{ title: '解读', content: text }];
-  } catch (e) {
-    return null;
-  }
-}
-
 /**
- * 生成解读
+ * 生成解读（优先 LLM，失败/未配置回退规则模板）
  */
 async function generateReading({ system, data, question }) {
-  const llmSections = await llmGenerate(system, data, question);
+  const llmSections = await callLLM({ system, data, question });
   if (llmSections) {
     return { system, sections: llmSections, source: 'llm', question: question || '' };
   }
