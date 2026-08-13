@@ -13,12 +13,16 @@ const { castHexagram } = require('../pan/yijing');
 const { calculateQimen } = require('../pan/qimen');
 const { calculateFengshui } = require('../pan/fengshui');
 const { calculateRelationship } = require('../pan/relationship');
+const { calculateAnnual, calculateMonthly } = require('../pan/annual');
+const store = require('../store');
 const { generateReading } = require('../ai/interpreter');
 
 function ok(data) { return { status: 200, json: { ok: true, data } }; }
 function fail(status, msg) { return { status, json: { ok: false, error: msg } }; }
 
-async function handleApi(path, body) {
+async function handleApi(path, body, ctx = {}) {
+  const method = ctx.method || 'POST';
+  const clientId = (ctx.headers && ctx.headers['x-client-id']) || 'anon';
   try {
     if (path === '/api/health') return ok({ status: 'up', time: new Date().toISOString() });
 
@@ -61,6 +65,27 @@ async function handleApi(path, body) {
     if (path === '/api/relationship' || path === '/api/fortune/relationship') {
       const r = calculateRelationship(body || {});
       return ok(r);
+    }
+    if (path === '/api/annual' || path === '/api/fortune/annual') {
+      const a = calculateAnnual(body || {});
+      return ok(a);
+    }
+    if (path === '/api/monthly' || path === '/api/fortune/monthly') {
+      const m = calculateMonthly(body || {});
+      return ok(m);
+    }
+    // 用户存储：历史 / 收藏（clientId 经 X-Client-Id 头传递）
+    if (path === '/api/user/history' && method === 'GET') return ok(store.listHistory(clientId));
+    if (path === '/api/user/history' && method === 'POST') return ok(store.addHistory(clientId, body || {}));
+    if (path.startsWith('/api/user/history/') && method === 'DELETE') {
+      const id = path.split('/').pop();
+      return ok(store.deleteHistory(clientId, id));
+    }
+    if (path === '/api/user/favorites' && method === 'GET') return ok(store.listFavorites(clientId));
+    if (path === '/api/user/favorites' && method === 'POST') return ok(store.addFavorite(clientId, body || {}));
+    if (path.startsWith('/api/user/favorites/') && method === 'DELETE') {
+      const id = path.split('/').pop();
+      return ok(store.deleteFavorite(clientId, id));
     }
     if (path === '/api/reading' || path === '/api/fortune/reading') {
       if (!body || !body.system) return fail(400, '缺少 system 字段');

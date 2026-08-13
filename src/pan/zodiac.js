@@ -66,4 +66,4 @@ function calculateZodiac(input) {
   };
 }
 
-module.exports = { calculateZodiac, ZODIAC, ZODIAC_BRANCH };
+module.exports = { calculateZodiac, ZODIAC, ZODIAC_BRANCH, BRANCH_ZODIAC, CHONG, HE };

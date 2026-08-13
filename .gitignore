@@ -16,3 +16,7 @@ Thumbs.db
 
 # test artifacts
 coverage/
+
+# local user data (history/favorites store)
+data/
+

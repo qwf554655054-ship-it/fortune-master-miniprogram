@@ -246,6 +246,40 @@ function ruleRelationship(data, question) {
   return sections;
 }
 
+function ruleAnnual(data, question) {
+  const sections = [];
+  sections.push({
+    title: '年运总断',
+    content: `${data.birthZodiac}年生人，${data.targetYear}年（${data.targetGanZhi}·${data.targetZodiac}年）：${data.relation}（${data.score}/100）。${data.detail}`,
+  });
+  const byScore = (list) => list.filter((m) => m.score >= 80).map((m) => m.month + '月').join('、') || '（暂无）';
+  const byLow = (list) => list.filter((m) => m.score <= 50).map((m) => m.month + '月').join('、') || '（暂无）';
+  sections.push({
+    title: '逐月提示',
+    content: `全年较旺的月份：${byScore(data.months)}；较需谨慎的月份：${byLow(data.months)}。可顺势安排重要事项。`,
+  });
+  sections.push({
+    title: '分领域建议',
+    content:
+      '事业：顺势之年大胆推进，平稳之年深耕积累。\n感情：六合/旺月主动经营，冲刑之年多沟通少赌气。\n健康：无论顺逆，作息与体检照常。\n财运：旺月可适度进取，谨慎月守成为上。',
+  });
+  sections.push({ title: '建议', content: '年运为趣味参考，真正的运势由你的行动决定。' });
+  return sections;
+}
+
+function ruleMonthly(data, question) {
+  const sections = [];
+  sections.push({
+    title: '月运总断',
+    content: `${data.birthZodiac}年生人，${data.targetYear}年${data.month}月（${data.monthGanZhi}）：${data.relation}（${data.score}/100）。${data.detail}`,
+  });
+  sections.push({
+    title: '建议',
+    content: '本月可据此安排节奏：旺月多行动、谨慎月多准备。仅供参考，心态与行动最重要。',
+  });
+  return sections;
+}
+
 function ruleGenerate(system, data, question) {
   if (system === 'bazi') return ruleBazi(data, question);
   if (system === 'ziwei') return ruleZiwei(data, question);
@@ -257,6 +291,8 @@ function ruleGenerate(system, data, question) {
   if (system === 'qimen') return ruleQimen(data, question);
   if (system === 'fengshui') return ruleFengshui(data, question);
   if (system === 'relationship') return ruleRelationship(data, question);
+  if (system === 'annual') return ruleAnnual(data, question);
+  if (system === 'monthly') return ruleMonthly(data, question);
   return [{ title: '提示', content: '该体系暂仅支持规则解读。' }];
 }
 

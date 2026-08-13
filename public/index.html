@@ -24,6 +24,8 @@
     <button class="tab" data-tab="qimen">奇门择吉</button>
     <button class="tab" data-tab="fengshui">风水八宅</button>
     <button class="tab" data-tab="relationship">关系合盘</button>
+    <button class="tab" data-tab="annual">生肖年运</button>
+    <button class="tab" data-tab="monthly">月运</button>
   </nav>
 
   <main>
@@ -144,7 +146,42 @@
       </div>
       <div class="result" id="tarot-result"></div>
     </section>
+
+    <!-- 年运 -->
+    <section class="panel" id="panel-annual">
+      <div class="form">
+        <label>出生年份<input type="number" id="annual-year" value="1990" min="1900" max="2100" /></label>
+        <label>目标年份（留空为今年）<input type="number" id="annual-target" value="2026" min="1900" max="2100" /></label>
+        <button class="primary" id="annual-btn">查看年运</button>
+      </div>
+      <div class="result" id="annual-result"></div>
+    </section>
+
+    <!-- 月运 -->
+    <section class="panel" id="panel-monthly">
+      <div class="form">
+        <label>出生年份<input type="number" id="monthly-year" value="1990" min="1900" max="2100" /></label>
+        <label>目标年份<input type="number" id="monthly-target" value="2026" min="1900" max="2100" /></label>
+        <label>目标月份（1-12，留空为当月）<input type="number" id="monthly-month" min="1" max="12" /></label>
+        <button class="primary" id="monthly-btn">查看月运</button>
+      </div>
+      <div class="result" id="monthly-result"></div>
+    </section>
   </main>
+
+  <section class="records">
+    <h2>我的记录</h2>
+    <div class="record-cols">
+      <div>
+        <h3>最近测算</h3>
+        <div id="history-list" class="record-list"><p class="empty">暂无记录</p></div>
+      </div>
+      <div>
+        <h3>我的收藏</h3>
+        <div id="favorites-list" class="record-list"><p class="empty">暂无收藏</p></div>
+      </div>
+    </div>
+  </section>
 
   <footer class="app-footer">数据来自 lunar-javascript · 解读由知识框架与规则/LLM 生成</footer>
   <script src="/app.js"></script>

@@ -15,9 +15,32 @@ document.querySelectorAll('.tab').forEach((t) => {
   });
 });
 
-async function postJSON(url, body) {
-  const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+// 本地客户端标识（用于历史/收藏存储）
+let clientId = localStorage.getItem('fm_client');
+if (!clientId) { clientId = Math.random().toString(36).slice(2) + Date.now().toString(36); localStorage.setItem('fm_client', clientId); }
+
+const SYSTEM_LABEL = { bazi: '八字排盘', ziwei: '紫微斗数', zodiac: '生肖运势', daily: '每日运势', numerology: '数字命理', tarot: '塔罗占卜', yijing: '六爻起卦', qimen: '奇门择吉', fengshui: '风水八宅', relationship: '关系合盘', annual: '生肖年运', monthly: '月运' };
+
+let lastRecord = null; // 最近一次成功测算的上下文（供收藏/分享）
+
+async function apiFetch(url, opts) {
+  opts = opts || {};
+  opts.headers = Object.assign({}, opts.headers, { 'X-Client-Id': clientId });
+  const r = await fetch(url, opts);
   return r.json();
+}
+
+async function postJSON(url, body) {
+  const json = await apiFetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  // 自动记录历史（除 user/reading/health 外）
+  if (json.ok && url.startsWith('/api/') && !url.includes('/user/') && !url.includes('/reading') && !url.includes('/health')) {
+    const sys = url.split('/')[2] || '';
+    const label = SYSTEM_LABEL[sys] || sys;
+    lastRecord = { system: sys, title: label, params: body };
+    apiFetch('/api/user/history', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ system: sys, title: label, params: body }) }).catch(() => {});
+    loadHistory();
+  }
+  return json;
 }
 
 function esc(s) { return String(s == null ? '' : s); }
@@ -29,6 +52,31 @@ function renderSections(container, sections) {
     c.innerHTML = `<h3>${esc(s.title)}</h3><p>${esc(s.content)}</p>`;
     container.appendChild(c);
   });
+  // 操作条：收藏 + 八字分享图
+  if (lastRecord && !container.dataset.actions) {
+    container.dataset.actions = '1';
+    const bar = document.createElement('div');
+    bar.className = 'actions';
+    const fav = document.createElement('button');
+    fav.className = 'btn-small';
+    fav.textContent = '☆ 收藏';
+    fav.onclick = async () => {
+      const summary = container.innerText.slice(0, 200);
+      await apiFetch('/api/user/favorites', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ system: lastRecord.system, title: lastRecord.title, summary }) });
+      loadFavorites();
+      fav.textContent = '✓ 已收藏';
+      fav.disabled = true;
+    };
+    bar.appendChild(fav);
+    if (lastRecord.system === 'bazi' && lastRecord.data) {
+      const share = document.createElement('button');
+      share.className = 'btn-small';
+      share.textContent = '↗ 生成分享图';
+      share.onclick = () => buildShareCard(lastRecord.data);
+      bar.appendChild(share);
+    }
+    container.appendChild(bar);
+  }
 }
 
 function renderError(container, msg) {
@@ -49,6 +97,7 @@ el('bazi-btn').addEventListener('click', async () => {
     const bazi = await postJSON('/api/bazi', { year, month, day, hour, minute, gender });
     if (!bazi.ok) { renderError(out, bazi.error); return; }
     const d = bazi.data;
+    if (lastRecord) lastRecord.data = d; // 供分享图使用
     out.innerHTML = '';
     // 四柱
     const pc = document.createElement('div');
@@ -347,3 +396,196 @@ el('relationship-btn').addEventListener('click', async () => {
     if (reading.ok) renderSections(rc, reading.data.sections);
   } catch (e) { renderError(out, '请求失败：' + e.message); }
 });
+
+'use strict';
+// ===== 年运 =====
+el('annual-btn').addEventListener('click', async () => {
+  const out = el('annual-result');
+  out.innerHTML = '<div class="card"><p>计算中…</p></div>';
+  const year = Number(el('annual-year').value);
+  if (!year) { renderError(out, '请输入出生年份'); return; }
+  const payload = { year };
+  if (el('annual-target').value) payload.targetYear = Number(el('annual-target').value);
+  try {
+    const a = await postJSON('/api/annual', payload);
+    if (!a.ok) { renderError(out, a.error); return; }
+    const d = a.data;
+    const cls = d.score >= 80 ? 'he' : d.score <= 50 ? 'chong' : 'ping';
+    out.innerHTML = '';
+    const c = document.createElement('div');
+    c.className = 'card';
+    c.innerHTML = '<h3>' + d.targetYear + ' 年运 · <span class="tag ' + cls + '">' + d.relation + '</span> ' + d.score + '/100</h3><p>' + d.detail + '</p><p class="legend">最佳月份：' + d.bestMonth + '月 · 需谨慎：' + d.worstMonth + '月</p>';
+    out.appendChild(c);
+    const rc = document.createElement('div');
+    rc.className = 'card';
+    rc.innerHTML = '<h3>年运解读</h3><p>生成中…</p>';
+    out.appendChild(rc);
+    const reading = await postJSON('/api/reading', { system: 'annual', data: d });
+    if (reading.ok) renderSections(rc, reading.data.sections);
+  } catch (e) { renderError(out, '请求失败：' + e.message); }
+});
+
+// ===== 月运 =====
+el('monthly-btn').addEventListener('click', async () => {
+  const out = el('monthly-result');
+  out.innerHTML = '<div class="card"><p>计算中…</p></div>';
+  const year = Number(el('monthly-year').value);
+  if (!year) { renderError(out, '请输入出生年份'); return; }
+  const payload = { year };
+  if (el('monthly-target').value) payload.targetYear = Number(el('monthly-target').value);
+  if (el('monthly-month').value) payload.month = Number(el('monthly-month').value);
+  try {
+    const m = await postJSON('/api/monthly', payload);
+    if (!m.ok) { renderError(out, m.error); return; }
+    const d = m.data;
+    const cls = d.score >= 80 ? 'he' : d.score <= 50 ? 'chong' : 'ping';
+    out.innerHTML = '';
+    const c = document.createElement('div');
+    c.className = 'card';
+    c.innerHTML = '<h3>' + d.targetYear + '年' + d.month + '月（' + d.monthGanZhi + '）· <span class="tag ' + cls + '">' + d.relation + '</span> ' + d.score + '/100</h3><p>' + d.detail + '</p>';
+    out.appendChild(c);
+    const rc = document.createElement('div');
+    rc.className = 'card';
+    rc.innerHTML = '<h3>月运解读</h3><p>生成中…</p>';
+    out.appendChild(rc);
+    const reading = await postJSON('/api/reading', { system: 'monthly', data: d });
+    if (reading.ok) renderSections(rc, reading.data.sections);
+  } catch (e) { renderError(out, '请求失败：' + e.message); }
+});
+
+// ===== 历史 / 收藏 =====
+async function loadHistory() {
+  try {
+    const r = await apiFetch('/api/user/history', { method: 'GET' });
+    renderHistory(r.ok ? r.data : []);
+  } catch (e) { /* 静默 */ }
+}
+async function loadFavorites() {
+  try {
+    const r = await apiFetch('/api/user/favorites', { method: 'GET' });
+    renderFavorites(r.ok ? r.data : []);
+  } catch (e) { /* 静默 */ }
+}
+function renderHistory(list) {
+  const box = el('history-list');
+  if (!list.length) { box.innerHTML = '<p class="empty">暂无记录</p>'; return; }
+  box.innerHTML = '';
+  list.forEach((h) => {
+    const item = document.createElement('div');
+    item.className = 'record-item';
+    item.innerHTML = '<div class="ri-title">' + esc(SYSTEM_LABEL[h.system] || h.system) + '</div><div class="ri-time">' + esc((h.createdAt || '').slice(0, 16).replace('T', ' ')) + '</div>';
+    const btnBar = document.createElement('div');
+    btnBar.className = 'ri-actions';
+    const restore = document.createElement('button');
+    restore.className = 'btn-small';
+    restore.textContent = '重算';
+    restore.onclick = () => restoreParams(h.system, h.params || {});
+    const del = document.createElement('button');
+    del.className = 'btn-small danger';
+    del.textContent = '删除';
+    del.onclick = async () => { await apiFetch('/api/user/history/' + h.id, { method: 'DELETE' }); loadHistory(); };
+    btnBar.appendChild(restore);
+    btnBar.appendChild(del);
+    item.appendChild(btnBar);
+    box.appendChild(item);
+  });
+}
+function renderFavorites(list) {
+  const box = el('favorites-list');
+  if (!list.length) { box.innerHTML = '<p class="empty">暂无收藏</p>'; return; }
+  box.innerHTML = '';
+  list.forEach((f) => {
+    const item = document.createElement('div');
+    item.className = 'record-item';
+    item.innerHTML = '<div class="ri-title">' + esc(f.title) + '</div><div class="ri-summary">' + esc(f.summary || '') + '</div>';
+    const del = document.createElement('button');
+    del.className = 'btn-small danger';
+    del.textContent = '取消收藏';
+    del.onclick = async () => { await apiFetch('/api/user/favorites/' + f.id, { method: 'DELETE' }); loadFavorites(); };
+    item.appendChild(del);
+    box.appendChild(item);
+  });
+}
+// 历史恢复：回填表单并触发对应模块
+function restoreParams(system, p) {
+  try {
+    const set = (id, v) => { const e = el(id); if (e) e.value = v; };
+    const pad = (n) => String(n).padStart(2, '0');
+    if (system === 'bazi') { set('bazi-date', p.year + '-' + pad(p.month) + '-' + pad(p.day)); set('bazi-time', pad(p.hour || 0) + ':' + pad(p.minute || 0)); set('bazi-gender', p.gender || 'male'); el('bazi-btn').click(); }
+    else if (system === 'ziwei') { set('ziwei-date', p.year + '-' + pad(p.month) + '-' + pad(p.day)); set('ziwei-time', pad(p.hour || 0) + ':00'); set('ziwei-gender', p.gender || 'male'); el('ziwei-btn').click(); }
+    else if (system === 'zodiac') { set('zodiac-year', p.year); set('zodiac-month', p.month || 1); set('zodiac-day', p.day || 1); el('zodiac-btn').click(); }
+    else if (system === 'daily') { set('daily-year', p.year); set('daily-date', p.date || ''); el('daily-btn').click(); }
+    else if (system === 'numerology') { set('numerology-date', p.year + '-' + pad(p.month) + '-' + pad(p.day)); el('numerology-btn').click(); }
+    else if (system === 'annual') { set('annual-year', p.year); set('annual-target', p.targetYear || ''); el('annual-btn').click(); }
+    else if (system === 'monthly') { set('monthly-year', p.year); set('monthly-target', p.targetYear || ''); set('monthly-month', p.month || ''); el('monthly-btn').click(); }
+    else if (system === 'fengshui') { set('fengshui-year', p.year); set('fengshui-gender', p.gender || 'male'); set('fengshui-date', p.date || ''); el('fengshui-btn').click(); }
+    else if (system === 'relationship') { set('rel-a-year', p.a ? p.a.year : ''); set('rel-b-year', p.b ? p.b.year : ''); el('relationship-btn').click(); }
+    else if (system === 'qimen') { set('qimen-date', p.date || ''); el('qimen-btn').click(); }
+    else if (system === 'yijing') { set('yijing-method', p.method || 'time'); if ((p.method || 'time') === 'numbers') { set('yijing-n1', p.num1); set('yijing-n2', p.num2); } else { set('yijing-date', p.year + '-' + pad(p.month) + '-' + pad(p.day)); set('yijing-time', pad(p.hour || 0) + ':00'); } el('yijing-btn').click(); }
+    else if (system === 'tarot') { set('tarot-count', p.count || 1); set('tarot-q', p.question || ''); el('tarot-btn').click(); }
+  } catch (e) { /* 静默 */ }
+}
+
+// ===== 分享图（canvas）=====
+function buildShareCard(b) {
+  const canvas = document.createElement('canvas');
+  canvas.width = 600; canvas.height = 800;
+  const ctx = canvas.getContext('2d');
+  // 背景
+  const grad = ctx.createLinearGradient(0, 0, 0, 800);
+  grad.addColorStop(0, '#2b2118'); grad.addColorStop(1, '#4a3826');
+  ctx.fillStyle = grad; ctx.fillRect(0, 0, 600, 800);
+  ctx.strokeStyle = '#c79a4b'; ctx.lineWidth = 3; ctx.strokeRect(16, 16, 568, 768);
+  ctx.fillStyle = '#c79a4b'; ctx.font = 'bold 40px serif'; ctx.textAlign = 'center';
+  ctx.fillText('命理测算 · 八字排盘', 300, 80);
+  ctx.font = '22px serif'; ctx.fillStyle = '#f3e9d8';
+  ctx.fillText(b.meta.lunarDate + ' · ' + b.meta.gender, 300, 120);
+  // 四柱
+  const pillarW = 120;
+  b.fourPillars.forEach((p, i) => {
+    const x = 90 + i * pillarW;
+    ctx.fillStyle = '#f3e9d8'; ctx.font = 'bold 28px serif';
+    ctx.fillText(p.ganzhi, x, 220);
+    ctx.fillStyle = '#d9c6a0'; ctx.font = '18px serif';
+    ctx.fillText(p.ganWuxing + '/' + p.zhiWuxing, x, 255);
+    ctx.fillStyle = '#b9a98f'; ctx.font = '15px serif';
+    ctx.fillText(p.name, x, 285);
+  });
+  // 五行条
+  ctx.fillStyle = '#f3e9d8'; ctx.font = '20px serif';
+  ctx.fillText('五行分布', 300, 350);
+  const colors = { 木: '#5a9a4e', 火: '#c0392b', 土: '#c79a4b', 金: '#9aa3ad', 水: '#2f6f9e' };
+  const keys = Object.keys(b.wuxingPercent);
+  const totalW = 480; let x = 60;
+  keys.forEach((k) => {
+    ctx.fillStyle = colors[k]; ctx.fillRect(x, 370, (b.wuxingPercent[k] / 100) * totalW, 24); x += (b.wuxingPercent[k] / 100) * totalW;
+  });
+  ctx.fillStyle = '#d9c6a0'; ctx.font = '16px serif';
+  ctx.fillText(keys.map((k) => k + ' ' + b.wuxingTally[k]).join('  '), 300, 420);
+  // 日主 + 大运
+  ctx.fillStyle = '#c79a4b'; ctx.font = 'bold 24px serif';
+  ctx.fillText('日主 ' + b.dayMaster.gan + '（' + b.dayMaster.wuxing + '）· ' + b.dayMasterStrength, 300, 480);
+  ctx.fillStyle = '#d9c6a0'; ctx.font = '18px serif';
+  ctx.fillText('大运：' + b.daYun.slice(0, 4).map((d) => d.ganzhi + ' ' + d.startAge + '-' + d.endAge).join('  '), 300, 525);
+  // 底部
+  ctx.fillStyle = '#b9a98f'; ctx.font = '15px serif';
+  ctx.fillText('本内容仅供娱乐与自我觉察', 300, 730);
+  ctx.fillText('生成于 ' + new Date().toLocaleDateString('zh-CN'), 300, 758);
+  // 下载
+  const a = document.createElement('a');
+  a.href = canvas.toDataURL('image/png');
+  a.download = 'mingli-bazi.png';
+  a.textContent = '点击下载分享图';
+  a.style.cssText = 'display:inline-block;margin-top:10px;color:#8b5a2b;font-weight:700;';
+  const holder = document.createElement('div');
+  holder.className = 'card';
+  holder.innerHTML = '<h3>分享图</h3>';
+  holder.appendChild(canvas);
+  holder.appendChild(a);
+  el('bazi-result').appendChild(holder);
+}
+
+// 初始化加载记录
+loadHistory();
+loadFavorites();
+

@@ -44,7 +44,7 @@ const server = http.createServer((req, res) => {
       let body = {};
       if (raw) { try { body = JSON.parse(raw); } catch (e) { res.writeHead(400, { 'Content-Type': 'application/json' }); res.end(JSON.stringify({ ok: false, error: 'JSON 解析失败' })); return; } }
       if (req.method === 'GET' && urlPath === '/api/health') body = {};
-      const result = await handleApi(urlPath, body);
+      const result = await handleApi(urlPath, body, { method: req.method, headers: req.headers });
       res.writeHead(result.status, { 'Content-Type': 'application/json; charset=utf-8' });
       res.end(JSON.stringify(result.json));
     });

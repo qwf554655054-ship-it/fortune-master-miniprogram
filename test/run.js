@@ -14,6 +14,8 @@ const { castHexagram } = require('../src/pan/yijing');
 const { calculateQimen } = require('../src/pan/qimen');
 const { calculateFengshui } = require('../src/pan/fengshui');
 const { calculateRelationship } = require('../src/pan/relationship');
+const { calculateAnnual, calculateMonthly } = require('../src/pan/annual');
+const store = require('../src/store');
 const { generateReading } = require('../src/ai/interpreter');
 
 let pass = 0, fail = 0;
@@ -174,6 +176,52 @@ async function main() {
     const t = drawTarot({ count: 1 });
     const rt = await generateReading({ system: 'tarot', data: t });
     assert.ok(rt.sections.length >= 1);
+  });
+
+  await test('年运：1990 马 对 2015 羊 为六合、12 个月完整', () => {
+    const a = calculateAnnual({ year: 1990, targetYear: 2015 });
+    assert.strictEqual(a.birthZodiac, '马');
+    assert.strictEqual(a.targetZodiac, '羊');
+    assert.strictEqual(a.relation, '六合');
+    assert.strictEqual(a.score, 90);
+    assert.strictEqual(a.months.length, 12);
+    assert.ok(a.bestMonth >= 1 && a.bestMonth <= 12);
+    assert.ok(a.worstMonth >= 1 && a.worstMonth <= 12);
+  });
+
+  await test('月运：返回月干支与目标月关系', () => {
+    const m = calculateMonthly({ year: 1990, targetYear: 2020, month: 5 });
+    assert.strictEqual(m.birthZodiac, '马');
+    assert.strictEqual(m.month, 5);
+    assert.strictEqual(m.monthGanZhi.length, 2);
+    assert.ok(['值太岁（本命年）', '冲太岁', '六合', '平稳'].includes(m.relation));
+    assert.ok(m.score >= 40 && m.score <= 90);
+    assert.ok(m.detail.length > 0);
+  });
+
+  await test('解读层：年运/月运规则解读返回段落', async () => {
+    const a = calculateAnnual({ year: 1990, targetYear: 2015 });
+    const ra = await generateReading({ system: 'annual', data: a });
+    assert.strictEqual(ra.source, 'rule');
+    assert.ok(ra.sections.length >= 3);
+    const m = calculateMonthly({ year: 1990, targetYear: 2020, month: 5 });
+    const rm = await generateReading({ system: 'monthly', data: m });
+    assert.ok(rm.sections.length >= 2);
+  });
+
+  await test('存储层：历史/收藏 CRUD 正常', () => {
+    const cid = 'test-' + Date.now();
+    assert.deepStrictEqual(store.listHistory(cid), []);
+    assert.deepStrictEqual(store.listFavorites(cid), []);
+    const h = store.addHistory(cid, { system: 'bazi', title: '庚午', summary: '测试' });
+    assert.ok(h.id && h.createdAt);
+    assert.strictEqual(store.listHistory(cid).length, 1);
+    const f = store.addFavorite(cid, { system: 'tarot', title: '愚者', summary: '收藏' });
+    assert.strictEqual(store.listFavorites(cid).length, 1);
+    assert.strictEqual(store.deleteHistory(cid, h.id), true);
+    assert.deepStrictEqual(store.listHistory(cid), []);
+    assert.strictEqual(store.deleteFavorite(cid, f.id), true);
+    assert.deepStrictEqual(store.listFavorites(cid), []);
   });
 
   console.log(`\n结果：通过 ${pass} / 失败 ${fail}`);
