@@ -1,0 +1,18 @@
+# dependencies
+node_modules/
+
+# local env / secrets
+.env
+.env.local
+*.local
+
+# workbuddy internal (never commit)
+.workbuddy/
+
+# os / editor
+.DS_Store
+Thumbs.db
+*.log
+
+# test artifacts
+coverage/

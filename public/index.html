@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>命理测算 · 小程序</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <header class="app-header">
+    <h1>命理测算</h1>
+    <p class="subtitle">八字排盘 · 生肖运势 · 塔罗占卜</p>
+    <p class="disclaimer">本工具仅供娱乐与自我觉察，不构成任何专业建议。</p>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab active" data-tab="bazi">八字排盘</button>
+    <button class="tab" data-tab="zodiac">生肖运势</button>
+    <button class="tab" data-tab="tarot">塔罗占卜</button>
+  </nav>
+
+  <main>
+    <!-- 八字 -->
+    <section class="panel active" id="panel-bazi">
+      <div class="form">
+        <label>出生日期<input type="date" id="bazi-date" value="1990-05-20" /></label>
+        <label>出生时间<input type="time" id="bazi-time" value="14:30" /></label>
+        <label>性别
+          <select id="bazi-gender"><option value="male">男</option><option value="female">女</option></select>
+        </label>
+        <button class="primary" id="bazi-btn">开始排盘</button>
+      </div>
+      <div class="result" id="bazi-result"></div>
+    </section>
+
+    <!-- 生肖 -->
+    <section class="panel" id="panel-zodiac">
+      <div class="form">
+        <label>出生年份<input type="number" id="zodiac-year" value="1990" min="1900" max="2100" /></label>
+        <label>出生月<input type="number" id="zodiac-month" value="5" min="1" max="12" /></label>
+        <label>出生日<input type="number" id="zodiac-day" value="20" min="1" max="31" /></label>
+        <button class="primary" id="zodiac-btn">查看运势</button>
+      </div>
+      <div class="result" id="zodiac-result"></div>
+    </section>
+
+    <!-- 塔罗 -->
+    <section class="panel" id="panel-tarot">
+      <div class="form">
+        <label>你的问题（可选）<input type="text" id="tarot-q" placeholder="例如：今年事业如何？" /></label>
+        <label>抽牌方式
+          <select id="tarot-count"><option value="1">单张指引</option><option value="3" selected>三张（过去/现在/未来）</option></select>
+        </label>
+        <button class="primary" id="tarot-btn">洗牌抽牌</button>
+      </div>
+      <div class="result" id="tarot-result"></div>
+    </section>
+  </main>
+
+  <footer class="app-footer">数据来自 lunar-javascript · 解读由知识框架与规则/LLM 生成</footer>
+  <script src="/app.js"></script>
+</body>
+</html>

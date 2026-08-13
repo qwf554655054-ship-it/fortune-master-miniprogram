@@ -1,0 +1,19 @@
+{
+  "name": "fortune-master-miniprogram",
+  "version": "0.1.0",
+  "description": "命理测算小程序 — 八字排盘 / 生肖运势 / 塔罗占卜（排盘层 + 知识层 + AI 解读层），基于 fortune-master-pro-dao-v2 知识框架。",
+  "type": "commonjs",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "test": "node test/run.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "lunar-javascript": "^1.7.7"
+  },
+  "license": "MIT"
+}
