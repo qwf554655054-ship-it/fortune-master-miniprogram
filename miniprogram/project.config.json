@@ -1,0 +1,21 @@
+{
+  "description": "命理测算小程序 - 微信小程序壳（前端调用现有 Node 后端 API）",
+  "packOptions": {
+    "ignore": [],
+    "include": []
+  },
+  "setting": {
+    "urlCheck": false,
+    "es6": true,
+    "enhance": true,
+    "postcss": true,
+    "minified": true,
+    "newFeature": true,
+    "bigPackageSizeSupport": true
+  },
+  "compileType": "miniprogram",
+  "libVersion": "3.0.0",
+  "appid": "touristappid",
+  "projectname": "fortune-master-miniprogram",
+  "condition": {}
+}

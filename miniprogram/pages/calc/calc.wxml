@@ -1,0 +1,36 @@
+<view class="page">
+  <view class="title">{{sys.name}}</view>
+
+  <view class="field" wx:for="{{fields}}" wx:key="key">
+    <view class="label">{{item.label}}</view>
+
+    <input wx:if="{{item.type === 'text' || item.type === 'number'}}"
+           class="input"
+           type="{{item.type === 'number' ? 'number' : 'text'}}"
+           placeholder="{{item.placeholder}}"
+           value="{{values[item.key]}}"
+           data-key="{{item.key}}"
+           bindinput="onInput" />
+
+    <picker wx:if="{{item.type === 'picker'}}"
+            mode="selector"
+            range="{{item.labels}}"
+            value="{{pickerIndex[item.key]}}"
+            data-key="{{item.key}}"
+            bindchange="onPickerChange">
+      <view class="picker">{{item.labels[pickerIndex[item.key]]}}</view>
+    </picker>
+  </view>
+
+  <button class="submit" loading="{{loading}}" bindtap="onSubmit">开始测算</button>
+
+  <view class="error" wx:if="{{error}}">{{error}}</view>
+
+  <view class="result" wx:if="{{result}}">
+    <view class="section" wx:for="{{result}}" wx:key="title">
+      <view class="sec-title">{{item.title}}</view>
+      <view class="sec-content">{{item.content}}</view>
+    </view>
+    <view class="disclaimer">以上为基于排盘的趣味参考，不构成任何专业建议；人生走向取决于你的选择与行动。</view>
+  </view>
+</view>

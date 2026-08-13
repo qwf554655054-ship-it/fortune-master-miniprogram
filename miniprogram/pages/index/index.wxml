@@ -1,0 +1,12 @@
+<view class="page">
+  <view class="hero">命理测算 · 趣味参考</view>
+
+  <view class="grid">
+    <view class="cell" wx:for="{{systems}}" wx:key="key"
+          data-key="{{item.key}}" bindtap="goCalc" hover-class="cell-hover">
+      <view class="cell-name">{{item.name}}</view>
+    </view>
+  </view>
+
+  <view class="tip">本应用仅用于娱乐与自我觉察，不涉及医疗、法律、财务等专业建议，亦不提供付费改运服务。</view>
+</view>

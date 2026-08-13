@@ -42,6 +42,30 @@ npm start          # 启动服务，默认 http://localhost:3000
 
 前端打开 `http://localhost:3000` 即可使用；也可通过 `/api/*` 对接到微信小程序、H5 或任意前端。
 
+## 微信小程序壳（`miniprogram/`）
+
+小程序本身**不做排盘计算**，仅作为前端调用本仓库的 Node 后端 API（`/api/*`），因此 12 个测算体系的全部逻辑都复用后端，无需重复实现。目录：
+
+```
+miniprogram/
+  project.config.json     # 工程配置（appid 当前为 touristappid 占位，发布前需替换为你自己的 AppID）
+  app.js / app.json / app.wxss
+  utils/api.js            # wx.request 封装，注入 X-Client-Id
+  utils/systems.js        # 12 个体系的字段元数据 + 请求体构造
+  pages/index/            # 测算菜单（12 体系网格）
+  pages/calc/             # 输入表单 → 调 /api/{system} 拿命盘 → 调 /api/reading 渲染解读
+  pages/records/          # 历史 / 收藏（调 /api/user/history、/api/user/favorites）
+```
+
+**接入步骤**：
+1. 用微信开发者工具「导入项目」，目录选 `miniprogram/`。
+2. 把 `project.config.json` 里的 `appid` 改为你自己的小程序 AppID（或保持 `touristappid` 仅本地预览）。
+3. 启动本仓库后端：`npm install && npm start`（默认 `http://localhost:3000`）。
+4. 在 `miniprogram/app.js` 把 `apiBase` 改为后端可达地址：
+   - 本地预览：填电脑局域网 IP，如 `http://192.168.x.x:3000`，并在开发者工具勾选「不校验合法域名、TLS 版本以及 HTTPS 证书」。
+   - 正式发布：必须填 **HTTPS 域名**，并在小程序后台「开发管理 → 服务器域名 → request 合法域名」中加入该域名。
+
+
 ## 可选：接入 LLM 解读
 
 设置环境变量后，解读层自动改用大模型（需兼容 OpenAI Chat Completions 协议的接口）：
@@ -66,7 +90,8 @@ src/store.js              # 本地用户存储层（历史/收藏，按 clientId
 src/knowledge/            # 知识层（框架文档 + 索引）
 src/ai/interpreter.js     # AI 解读层
 src/routes/api.js         # API 路由
-public/                   # 前端单页（含历史/收藏记录中心）
+public/                   # Web 前端单页（含历史/收藏记录中心）
+miniprogram/              # 微信小程序壳（前端，调用上面后端 API）
 test/run.js               # 测试（21 项）
 ```
 

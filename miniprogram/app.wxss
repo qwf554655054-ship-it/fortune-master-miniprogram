@@ -1,0 +1,36 @@
+/* 全局样式：暖金 + 深棕 国风基调 */
+page {
+  background: #221a12;
+  color: #ece3d4;
+  font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-size: 28rpx;
+}
+
+.page {
+  padding: 32rpx 28rpx 60rpx;
+  box-sizing: border-box;
+}
+
+.hero {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: #e8c477;
+  text-align: center;
+  margin: 24rpx 0 36rpx;
+  letter-spacing: 4rpx;
+}
+
+.tip, .disclaimer {
+  margin-top: 40rpx;
+  font-size: 24rpx;
+  color: #9c8c74;
+  line-height: 1.7;
+  text-align: center;
+}
+
+.title {
+  font-size: 38rpx;
+  font-weight: 700;
+  color: #e8c477;
+  margin-bottom: 28rpx;
+}

@@ -1,0 +1,26 @@
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.cell {
+  width: 31%;
+  margin-bottom: 22rpx;
+  padding: 36rpx 0;
+  background: linear-gradient(160deg, #3a2c1c, #2a2014);
+  border: 1rpx solid #4a3a26;
+  border-radius: 18rpx;
+  text-align: center;
+}
+
+.cell-hover {
+  background: linear-gradient(160deg, #4a3826, #34281a);
+  transform: scale(0.97);
+}
+
+.cell-name {
+  color: #ece3d4;
+  font-size: 28rpx;
+  font-weight: 600;
+}

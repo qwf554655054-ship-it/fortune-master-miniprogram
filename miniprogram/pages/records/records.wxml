@@ -1,0 +1,32 @@
+<view class="page">
+  <view class="tabs">
+    <view class="tab {{tab === 'history' ? 'active' : ''}}" data-tab="history" bindtap="switchTab">历史记录</view>
+    <view class="tab {{tab === 'favorites' ? 'active' : ''}}" data-tab="favorites" bindtap="switchTab">我的收藏</view>
+  </view>
+
+  <view class="error" wx:if="{{error}}">{{error}}</view>
+
+  <block wx:if="{{tab === 'history'}}">
+    <view class="empty" wx:if="{{history.length === 0}}">还没有测算记录，去首页试试吧～</view>
+    <view class="item" wx:for="{{history}}" wx:key="id">
+      <view class="item-top">
+        <text class="item-title">{{item.title}}</text>
+        <text class="item-del" data-id="{{item.id}}" bindtap="delHistory">删除</text>
+      </view>
+      <view class="item-summary">{{item.summary}}</view>
+      <view class="item-time">{{item.createdAt}}</view>
+    </view>
+  </block>
+
+  <block wx:if="{{tab === 'favorites'}}">
+    <view class="empty" wx:if="{{favorites.length === 0}}">还没有收藏。</view>
+    <view class="item" wx:for="{{favorites}}" wx:key="id">
+      <view class="item-top">
+        <text class="item-title">{{item.title}}</text>
+        <text class="item-del" data-id="{{item.id}}" bindtap="delFavorite">删除</text>
+      </view>
+      <view class="item-summary">{{item.summary}}</view>
+      <view class="item-time">{{item.createdAt}}</view>
+    </view>
+  </block>
+</view>
