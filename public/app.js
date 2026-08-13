@@ -225,3 +225,125 @@ el('tarot-btn').addEventListener('click', async () => {
     renderError(out, '请求失败：' + e.message);
   }
 });
+
+// ===== 六爻起卦 =====
+el('yijing-method').addEventListener('change', () => {
+  el('yijing-nums-label').style.display = el('yijing-method').value === 'numbers' ? 'flex' : 'none';
+});
+el('yijing-btn').addEventListener('click', async () => {
+  const out = el('yijing-result');
+  out.innerHTML = '<div class="card"><p>起卦中…</p></div>';
+  const method = el('yijing-method').value;
+  let payload;
+  if (method === 'numbers') {
+    payload = { method, num1: Number(el('yijing-n1').value), num2: Number(el('yijing-n2').value) };
+    if (!payload.num1 || !payload.num2) { renderError(out, '请输入两个数字'); return; }
+  } else {
+    const date = el('yijing-date').value;
+    if (!date) { renderError(out, '请选择日期'); return; }
+    const [year, month, day] = date.split('-').map(Number);
+    const time = el('yijing-time').value || '00:00';
+    const [hour] = time.split(':').map(Number);
+    payload = { method, year, month, day, hour };
+  }
+  try {
+    const y = await postJSON('/api/yijing', payload);
+    if (!y.ok) { renderError(out, y.error); return; }
+    const d = y.data;
+    out.innerHTML = '';
+    const c = document.createElement('div');
+    c.className = 'card';
+    c.innerHTML = `<h3>${d.hexagon}（动爻${d.movingLine}）</h3><p>上卦${d.upperGua} · 下卦${d.lowerGua}<br>${d.meaning}</p>`;
+    out.appendChild(c);
+    const rc = document.createElement('div');
+    rc.className = 'card';
+    rc.innerHTML = '<h3>卦象解读</h3><p>生成中…</p>';
+    out.appendChild(rc);
+    const reading = await postJSON('/api/reading', { system: 'yijing', data: d, question: el('yijing-q').value.trim() });
+    if (reading.ok) renderSections(rc, reading.data.sections);
+  } catch (e) { renderError(out, '请求失败：' + e.message); }
+});
+
+// ===== 奇门择吉 =====
+el('qimen-btn').addEventListener('click', async () => {
+  const out = el('qimen-result');
+  out.innerHTML = '<div class="card"><p>排盘中…</p></div>';
+  let payload;
+  const date = el('qimen-date').value;
+  if (date) {
+    const [year, month, day] = date.split('-').map(Number);
+    payload = { year, month, day };
+  } else {
+    const now = new Date();
+    payload = { year: now.getFullYear(), month: now.getMonth() + 1, day: now.getDate() };
+  }
+  try {
+    const q = await postJSON('/api/qimen', payload);
+    if (!q.ok) { renderError(out, q.error); return; }
+    const d = q.data;
+    out.innerHTML = '';
+    const c = document.createElement('div');
+    c.className = 'card';
+    c.innerHTML = `<h3>${d.meta.date} · ${d.yinYangDun}${d.ju}局（${d.meta.jieQi}）</h3>
+      <p>吉门：${d.luckyDoors.join('、')}<br>凶门：${d.badDoors.join('、')}</p><p class="legend">${d.note}</p>`;
+    out.appendChild(c);
+    const rc = document.createElement('div');
+    rc.className = 'card';
+    rc.innerHTML = '<h3>用事解读</h3><p>生成中…</p>';
+    out.appendChild(rc);
+    const reading = await postJSON('/api/reading', { system: 'qimen', data: d });
+    if (reading.ok) renderSections(rc, reading.data.sections);
+  } catch (e) { renderError(out, '请求失败：' + e.message); }
+});
+
+// ===== 风水八宅 =====
+el('fengshui-btn').addEventListener('click', async () => {
+  const out = el('fengshui-result');
+  out.innerHTML = '<div class="card"><p>计算中…</p></div>';
+  const year = Number(el('fengshui-year').value);
+  if (!year) { renderError(out, '请输入出生年份'); return; }
+  const payload = { year, gender: el('fengshui-gender').value };
+  const date = el('fengshui-date').value;
+  if (date) payload.date = date;
+  try {
+    const f = await postJSON('/api/fengshui', payload);
+    if (!f.ok) { renderError(out, f.error); return; }
+    const d = f.data;
+    out.innerHTML = '';
+    const c = document.createElement('div');
+    c.className = 'card';
+    c.innerHTML = `<h3>${d.mingGua.name}命（${d.mingGua.group}）</h3>
+      <p>吉位：${d.goodDirections.join('、')}</p><p>凶位：${d.badDirections.join('、')}</p>`;
+    out.appendChild(c);
+    const rc = document.createElement('div');
+    rc.className = 'card';
+    rc.innerHTML = '<h3>风水解读</h3><p>生成中…</p>';
+    out.appendChild(rc);
+    const reading = await postJSON('/api/reading', { system: 'fengshui', data: d });
+    if (reading.ok) renderSections(rc, reading.data.sections);
+  } catch (e) { renderError(out, '请求失败：' + e.message); }
+});
+
+// ===== 关系合盘 =====
+el('relationship-btn').addEventListener('click', async () => {
+  const out = el('relationship-result');
+  out.innerHTML = '<div class="card"><p>合盘中…</p></div>';
+  try {
+    const r = await postJSON('/api/relationship', { a: { year: Number(el('rel-a-year').value) }, b: { year: Number(el('rel-b-year').value) } });
+    if (!r.ok) { renderError(out, r.error); return; }
+    const d = r.data;
+    const cls = d.score >= 80 ? 'he' : d.score <= 50 ? 'chong' : 'ping';
+    out.innerHTML = '';
+    const c = document.createElement('div');
+    c.className = 'card';
+    c.innerHTML = `<h3>${d.a.zodiac} × ${d.b.zodiac} · <span class="tag ${cls}">${d.relation}</span> ${d.score}/100</h3>
+      <p>${d.detail}</p><p>${d.wuxingTip}</p>`;
+    out.appendChild(c);
+    const rc = document.createElement('div');
+    rc.className = 'card';
+    rc.innerHTML = '<h3>合盘解读</h3><p>生成中…</p>';
+    out.appendChild(rc);
+    const reading = await postJSON('/api/reading', { system: 'relationship', data: d });
+    if (reading.ok) renderSections(rc, reading.data.sections);
+  } catch (e) { renderError(out, '请求失败：' + e.message); }
+});

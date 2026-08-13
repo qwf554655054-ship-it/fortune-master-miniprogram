@@ -9,6 +9,10 @@ const { drawTarot } = require('../pan/tarot');
 const { calculateZiwei } = require('../pan/ziwei');
 const { calculateNumerology } = require('../pan/numerology');
 const { calculateDaily } = require('../pan/daily');
+const { castHexagram } = require('../pan/yijing');
+const { calculateQimen } = require('../pan/qimen');
+const { calculateFengshui } = require('../pan/fengshui');
+const { calculateRelationship } = require('../pan/relationship');
 const { generateReading } = require('../ai/interpreter');
 
 function ok(data) { return { status: 200, json: { ok: true, data } }; }
@@ -41,6 +45,22 @@ async function handleApi(path, body) {
     if (path === '/api/daily' || path === '/api/fortune/daily') {
       const d = calculateDaily(body || {});
       return ok(d);
+    }
+    if (path === '/api/yijing' || path === '/api/fortune/yijing') {
+      const y = castHexagram(body || {});
+      return ok(y);
+    }
+    if (path === '/api/qimen' || path === '/api/fortune/qimen') {
+      const q = calculateQimen(body || {});
+      return ok(q);
+    }
+    if (path === '/api/fengshui' || path === '/api/fortune/fengshui') {
+      const f = calculateFengshui(body || {});
+      return ok(f);
+    }
+    if (path === '/api/relationship' || path === '/api/fortune/relationship') {
+      const r = calculateRelationship(body || {});
+      return ok(r);
     }
     if (path === '/api/reading' || path === '/api/fortune/reading') {
       if (!body || !body.system) return fail(400, '缺少 system 字段');

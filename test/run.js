@@ -10,6 +10,10 @@ const { drawTarot } = require('../src/pan/tarot');
 const { calculateZiwei } = require('../src/pan/ziwei');
 const { calculateNumerology } = require('../src/pan/numerology');
 const { calculateDaily } = require('../src/pan/daily');
+const { castHexagram } = require('../src/pan/yijing');
+const { calculateQimen } = require('../src/pan/qimen');
+const { calculateFengshui } = require('../src/pan/fengshui');
+const { calculateRelationship } = require('../src/pan/relationship');
 const { generateReading } = require('../src/ai/interpreter');
 
 let pass = 0, fail = 0;
@@ -97,6 +101,62 @@ async function main() {
     const d = calculateDaily({ year: 1990 });
     const rd = await generateReading({ system: 'daily', data: d });
     assert.ok(rd.sections.length >= 1);
+  });
+
+  await test('六爻：时间起卦返回卦名与动爻', () => {
+    const y = castHexagram({ year: 1990, month: 5, day: 20, hour: 14, method: 'time' });
+    assert.ok(y.hexagon.length >= 3, '应为三字以上卦名');
+    assert.ok(y.movingLine >= 1 && y.movingLine <= 6);
+    assert.ok(['乾', '兑', '离', '震', '巽', '坎', '艮', '坤'].includes(y.upperGua));
+    assert.ok(y.meaning.length > 0);
+  });
+
+  await test('六爻：数字起卦可用', () => {
+    const y = castHexagram({ method: 'numbers', num1: 7, num2: 5 });
+    assert.strictEqual(y.upperGua, '艮');
+    assert.strictEqual(y.lowerGua, '巽');
+    assert.ok(y.hexagon.length >= 3);
+  });
+
+  await test('奇门：返回阴阳遁/局数/吉凶门', () => {
+    const q = calculateQimen({ year: 2026, month: 8, day: 13 });
+    assert.ok(['阳遁', '阴遁'].includes(q.yinYangDun));
+    assert.ok(q.ju >= 1 && q.ju <= 9);
+    assert.ok(q.luckyDoors.length >= 3);
+    assert.ok(q.badDoors.length >= 4);
+  });
+
+  await test('风水：1990 男命为坎（东四命）', () => {
+    const f = calculateFengshui({ year: 1990, gender: 'male' });
+    assert.strictEqual(f.mingGua.num, 1);
+    assert.strictEqual(f.mingGua.group, '东四命');
+    assert.ok(f.goodDirections.length >= 4);
+    assert.ok(f.badDirections.length >= 4);
+  });
+
+  await test('关系合盘：马(1990)×猴(1992) 生肖普通、年命相生', () => {
+    const r = calculateRelationship({ a: { year: 1990 }, b: { year: 1992 } });
+    assert.strictEqual(r.a.zodiac, '马');
+    assert.strictEqual(r.b.zodiac, '猴');
+    assert.strictEqual(r.relation, '普通');
+    assert.strictEqual(r.wuxingRel, '相生');
+    assert.strictEqual(r.score, 66); // 60 基础 + 6 年命相生
+    assert.ok(r.wuxingTip.length > 0);
+  });
+
+  await test('解读层：M2 新体系（易/奇门/风水/合盘）均返回段落', async () => {
+    const y = castHexagram({ year: 1990, month: 5, day: 20, hour: 14, method: 'time' });
+    const ry = await generateReading({ system: 'yijing', data: y });
+    assert.ok(ry.sections.length >= 2);
+    const q = calculateQimen({ year: 2026, month: 8, day: 13 });
+    const rq = await generateReading({ system: 'qimen', data: q });
+    assert.ok(rq.sections.length >= 2);
+    const f = calculateFengshui({ year: 1990, gender: 'male' });
+    const rf = await generateReading({ system: 'fengshui', data: f });
+    assert.ok(rf.sections.length >= 3);
+    const rel = calculateRelationship({ a: { year: 1990 }, b: { year: 1992 } });
+    const rr = await generateReading({ system: 'relationship', data: rel });
+    assert.ok(rr.sections.length >= 2);
   });
 
   await test('解读层：八字规则解读生成结构化段落', async () => {

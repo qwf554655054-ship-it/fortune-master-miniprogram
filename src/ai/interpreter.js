@@ -191,6 +191,61 @@ function ruleDaily(data, question) {
   return sections;
 }
 
+function ruleYijing(data, question) {
+  const sections = [];
+  sections.push({
+    title: '卦象',
+    content: `${data.upperGua}上卦、${data.lowerGua}下卦，得「${data.hexagon}」，动爻第${data.movingLine}爻。${data.meaning}`,
+  });
+  sections.push({
+    title: '指引',
+    content: `${question ? `针对你的问题「${question}」：` : ''}本卦提示${data.meaning}动爻所在，代表变化的契机所在；结合当下处境顺势而为，可参考卦意调整策略。`,
+  });
+  sections.push({ title: '建议', content: data.note });
+  return sections;
+}
+
+function ruleQimen(data, question) {
+  const sections = [];
+  sections.push({
+    title: '当日奇门',
+    content: `${data.meta.date}（${data.dayGanZhi}），${data.yinYangDun}${data.ju}局。当日吉门：${data.luckyDoors.join('、')}；凶门：${data.badDoors.join('、')}。`,
+  });
+  sections.push({
+    title: '用事建议',
+    content: `重要会谈、签约、出行可优先选择吉门方位（如${data.luckyDoors[0] || '北'}），规避凶门方位（如${data.badDoors[0] || '南'}）。`,
+  });
+  sections.push({ title: '提示', content: data.note });
+  return sections;
+}
+
+function ruleFengshui(data, question) {
+  const sections = [];
+  const g = data.mingGua;
+  sections.push({
+    title: '本命卦',
+    content: `${g.name}命（${g.group}）。传统八宅认为${g.group}宜住${g.group === '东四命' ? '东四宅（东、南、东南、北）' : '西四宅（西、西北、西南、东北）'}。`,
+  });
+  sections.push({ title: '吉位', content: `生气/天医/延年/伏位（吉）：${data.goodDirections.join('、')}` });
+  sections.push({ title: '凶位', content: `绝命/五鬼/六煞/祸害（凶）：${data.badDirections.join('、')}` });
+  if (data.dateInfo) {
+    sections.push({ title: '择日提示', content: `${data.dateInfo.date}（${data.dateInfo.dayGanZhi}日，冲${data.dateInfo.chong}）：属${data.dateInfo.chong}者当日宜避大事，余者平顺。` });
+  }
+  sections.push({ title: '建议', content: data.note });
+  return sections;
+}
+
+function ruleRelationship(data, question) {
+  const sections = [];
+  sections.push({
+    title: '合盘总断',
+    content: `${data.a.zodiac}（${data.a.year}年）与 ${data.b.zodiac}（${data.b.year}年）：生肖关系「${data.relation}」，合盘评分 ${data.score}/100。${data.detail}`,
+  });
+  sections.push({ title: '五行层面', content: data.wuxingTip });
+  sections.push({ title: '建议', content: data.note });
+  return sections;
+}
+
 function ruleGenerate(system, data, question) {
   if (system === 'bazi') return ruleBazi(data, question);
   if (system === 'ziwei') return ruleZiwei(data, question);
@@ -198,6 +253,10 @@ function ruleGenerate(system, data, question) {
   if (system === 'daily') return ruleDaily(data, question);
   if (system === 'tarot') return ruleTarot(data, question);
   if (system === 'numerology') return ruleNumerology(data, question);
+  if (system === 'yijing') return ruleYijing(data, question);
+  if (system === 'qimen') return ruleQimen(data, question);
+  if (system === 'fengshui') return ruleFengshui(data, question);
+  if (system === 'relationship') return ruleRelationship(data, question);
   return [{ title: '提示', content: '该体系暂仅支持规则解读。' }];
 }
 

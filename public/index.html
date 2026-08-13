@@ -20,6 +20,10 @@
     <button class="tab" data-tab="daily">每日运势</button>
     <button class="tab" data-tab="numerology">数字命理</button>
     <button class="tab" data-tab="tarot">塔罗占卜</button>
+    <button class="tab" data-tab="yijing">六爻起卦</button>
+    <button class="tab" data-tab="qimen">奇门择吉</button>
+    <button class="tab" data-tab="fengshui">风水八宅</button>
+    <button class="tab" data-tab="relationship">关系合盘</button>
   </nav>
 
   <main>
@@ -77,6 +81,56 @@
         <button class="primary" id="numerology-btn">计算灵数</button>
       </div>
       <div class="result" id="numerology-result"></div>
+    </section>
+
+    <!-- 六爻起卦 -->
+    <section class="panel" id="panel-yijing">
+      <div class="form">
+        <label>起卦方式
+          <select id="yijing-method">
+            <option value="time">时间起卦</option>
+            <option value="numbers">数字起卦</option>
+          </select>
+        </label>
+        <label>出生日期<input type="date" id="yijing-date" value="1990-05-20" /></label>
+        <label>出生时间<input type="time" id="yijing-time" value="14:30" /></label>
+        <label id="yijing-nums-label" style="display:none">两个数字（1-99）<span style="display:flex;gap:8px"><input type="number" id="yijing-n1" placeholder="上卦数" /><input type="number" id="yijing-n2" placeholder="下卦数" /></span></label>
+        <label>你的问题（可选）<input type="text" id="yijing-q" placeholder="例如：这次合作如何？" /></label>
+        <button class="primary" id="yijing-btn">起卦</button>
+      </div>
+      <div class="result" id="yijing-result"></div>
+    </section>
+
+    <!-- 奇门择吉 -->
+    <section class="panel" id="panel-qimen">
+      <div class="form">
+        <label>查看日期（留空为今天）<input type="date" id="qimen-date" /></label>
+        <button class="primary" id="qimen-btn">排奇门盘</button>
+      </div>
+      <div class="result" id="qimen-result"></div>
+    </section>
+
+    <!-- 风水八宅 -->
+    <section class="panel" id="panel-fengshui">
+      <div class="form">
+        <label>出生年份<input type="number" id="fengshui-year" value="1990" min="1900" max="2100" /></label>
+        <label>性别
+          <select id="fengshui-gender"><option value="male">男</option><option value="female">女</option></select>
+        </label>
+        <label>择日参考日期（可选）<input type="date" id="fengshui-date" /></label>
+        <button class="primary" id="fengshui-btn">查看八宅</button>
+      </div>
+      <div class="result" id="fengshui-result"></div>
+    </section>
+
+    <!-- 关系合盘 -->
+    <section class="panel" id="panel-relationship">
+      <div class="form">
+        <label>TA 的出生年份<input type="number" id="rel-a-year" value="1990" min="1900" max="2100" /></label>
+        <label>你的出生年份<input type="number" id="rel-b-year" value="1992" min="1900" max="2100" /></label>
+        <button class="primary" id="relationship-btn">开始合盘</button>
+      </div>
+      <div class="result" id="relationship-result"></div>
     </section>
 
     <!-- 塔罗 -->
