@@ -11,6 +11,23 @@ const { callLLM } = require('./llm');
 const WUXING_COLOR = { 木: '青绿', 火: '红', 土: '黄', 金: '白', 水: '黑' };
 const WUXING_DIR = { 木: '东', 火: '南', 土: '中', 金: '西', 水: '北' };
 
+// 会员专享·深度延展（freemium 内容差异，可被真实 LLM 深度解读替换）
+const DEEP_EXTRA = {
+  bazi: '深度延展：把命局看作一份"能量配置说明书"而非定数。身强者可主动承担更具挑战性的目标以释放势能；身弱者宜先夯实能力圈、借平台之力。未来三年重点关注大运切换的节点年份——那往往是外部机会与内在状态共振的窗口。',
+  ziwei: '深度延展：命盘十二宫是人生不同领域的"资源分布图"。优先在你"主星庙旺、化禄化权"的宫位对应的领域发力，事半功倍；化忌所在宫位则宜守不宜攻，提前做风险缓冲。流年走到重要宫位时，顺势布局。',
+  zodiac: '深度延展：生肖运是年度"天气"，不是你的"剧本"。关系为"冲"的年份重在稳与守（重大决定缓一缓），为"六合/三合"的年份重在连与动（多合作、多出行）。把能量用在可控的事上，比预测更可靠。',
+  daily: '深度延展：日运是"今日情绪底色"的提示。若今日偏"凶"，把它当成"低速模式"——处理例行事务、避免高风险决策即可，不必焦虑；若偏"吉"，借势推进拖延已久的事。你始终拥有是否执行的主动权。',
+  numerology: '深度延展：生命灵数揭示的是你的"默认操作系统"与功课方向。若某条路径反复让你受挫，不妨对照灵数特质看看是否在与天性对抗。天赋数提示你天然擅长的事，可据此选择长期投入的赛道。',
+  tarot: '深度延展：牌面不是预言，而是"当下心理场域的镜子"。三张（过去/现在/未来）构成一条叙事线——过去塑造了现在，而现在的选择决定未来。若未来牌不理想，改变"现在"这一张即可改写走向。',
+  yijing: '深度延展：卦象给出的是"时位"判断——此事在当前时空节点宜进还是宜守。变爻提示关键转折点。把卦辞当作决策前的第二视角校验，而非唯一依据；重大决策仍请以现实信息为准。',
+  qimen: '深度延展：奇门提供的是"时空能量分布"的参考框架。吉门吉星方位适合启动重要事项，凶格方位宜避开或谨慎。它帮你优化"何时/何地"，但不能替代"做什么/为谁做"的判断。',
+  fengshui: '深度延展：八宅是居住环境与人的"匹配度"模型。东四命住东四宅、西四命住西四宅为基本原则；但采光、通风、整洁对健康的影响远大于方位。先解决物理环境，再用风水做微调。',
+  relationship: '深度延展：合盘看的是两人"能量互动模式"，而非缘分有无。相生组合顺、相冲组合需更多沟通机制。任何关系都靠经营，合盘只是指出你们天然容易在哪方面"踩脚"，提前设防即可。',
+  annual: '深度延展：年运按月展开，本质是"年度节奏地图"。把最佳月用于进攻（求职、签约、启动），最需谨慎月用于防守（不出大错、不冒进）。节奏感比单点运势更能决定年终结果。',
+  monthly: '深度延展：月运是年运的"放大镜"。流月与流年同吉则顺势加码，流月冲流年则本月宜收。把本月要事尽量排在吉日吉方，是一种低成本的自我赋能。',
+  xingzhan: '深度延展：星盘是个人心理原型的"宇宙隐喻"。个人行星（日/月/水/金/火）描述你如何感受与行动，社会行星（木/土）描述你如何成长与受限，世代行星（天/海/冥）标记你所处的时代集体潜意识。重点相位揭示内在张力——觉察它，便已迈出整合的第一步。',
+};
+
 function ruleBazi(chart, question) {
   const { dayMaster, wuxingTally, wuxingPercent, fiveElements, dayMasterStrength, fourPillars, daYun, shengXiao } = chart;
   const sections = [];
@@ -373,12 +390,19 @@ function ruleGenerate(system, data, question) {
 /**
  * 生成解读（优先 LLM，失败/未配置回退规则模板）
  */
-async function generateReading({ system, data, question }) {
-  const llmSections = await callLLM({ system, data, question });
+async function generateReading({ system, data, question, deep }) {
+  const llmSections = await callLLM({ system, data, question, deep });
+  let sections, source;
   if (llmSections) {
-    return { system, sections: llmSections, source: 'llm', question: question || '' };
+    sections = llmSections; source = 'llm';
+  } else {
+    sections = ruleGenerate(system, data, question); source = 'rule';
   }
-  return { system, sections: ruleGenerate(system, data, question), source: 'rule', question: question || '' };
+  if (deep) {
+    const extra = DEEP_EXTRA[system] || '作为会员，建议你把以上解读当作一份"自我觉察清单"：挑出最触动你的 1-2 点，转化为本周可执行的小行动，比一次性全盘接受更有价值。';
+    sections = sections.concat([{ title: '💎 会员专享·深度延展', content: extra }]);
+  }
+  return { system, sections, source, question: question || '', deep: !!deep };
 }
 
 module.exports = { generateReading };

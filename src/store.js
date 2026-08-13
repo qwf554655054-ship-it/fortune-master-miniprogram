@@ -19,8 +19,41 @@ function save(db) {
 }
 function clientOf(clientId) {
   const db = load();
-  if (!db[clientId]) db[clientId] = { history: [], favorites: [] };
+  if (!db[clientId]) db[clientId] = { history: [], favorites: [], membership: { tier: 'free', plan: null, expireAt: null } };
+  if (!db[clientId].membership) db[clientId].membership = { tier: 'free', plan: null, expireAt: null };
   return db;
+}
+
+// ===== 会员 / 商业化（本地演示，未接入真实支付）=====
+const PLANS = {
+  monthly: { tier: 'vip', plan: 'monthly', days: 30, label: '月度会员', price: '¥19.9 / 月' },
+  yearly: { tier: 'vip', plan: 'yearly', days: 365, label: '年度会员', price: '¥199 / 年' },
+};
+
+function getMembership(clientId) {
+  const m = JSON.parse(JSON.stringify(clientOf(clientId)[clientId].membership || { tier: 'free' }));
+  if (m.tier === 'vip' && m.expireAt && new Date(m.expireAt) < new Date()) {
+    m.tier = 'free'; m.plan = null; m.expireAt = null; m.lapsed = true;
+  }
+  m.demo = true; // 明确标注：本地模拟，未接真实支付
+  return m;
+}
+
+function upgradeMembership(clientId, planKey) {
+  const plan = PLANS[planKey] || PLANS.monthly;
+  const db = clientOf(clientId);
+  const expireAt = new Date(Date.now() + plan.days * 86400000).toISOString();
+  db[clientId].membership = {
+    tier: 'vip',
+    plan: plan.plan,
+    label: plan.label,
+    price: plan.price,
+    expireAt,
+    upgradedAt: new Date().toISOString(),
+    demo: true,
+  };
+  save(db);
+  return db[clientId].membership;
 }
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
 
@@ -72,4 +105,4 @@ function deleteFavorite(clientId, id) {
   return true;
 }
 
-module.exports = { listHistory, addHistory, deleteHistory, listFavorites, addFavorite, deleteFavorite };
+module.exports = { listHistory, addHistory, deleteHistory, listFavorites, addFavorite, deleteFavorite, getMembership, upgradeMembership, PLANS };

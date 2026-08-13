@@ -24,7 +24,8 @@
 | 月运 | `/api/monthly` | 指定年月的生肖流月关系与运势提示 |
 | 星盘占星 | `/api/xingzhan` | 西方占星：十大行星地心黄道经度、落座与度数、顺/逆行、五大主要相位（合/六分/四分/三分/对冲），基于 `astronomy-engine` 真实星历 |
 | 用户存储 | `/api/user/history` `/api/user/favorites` | 按 `X-Client-Id` 分用户保存历史记录与收藏（本地 JSON，上限 50 条） |
-| 命理解读 | `/api/reading` | 按体系生成结构化解读（LLM 优先，失败/未配置自动回退规则模板） |
+| 命理解读 | `/api/reading` | 按体系生成结构化解读（LLM 优先，失败/未配置自动回退规则模板）；支持 `deep:true` 会员深度解读 |
+| 会员 / 商业化 | `/api/membership`（GET）、`/api/membership/upgrade`（POST） | 按 `X-Client-Id` 存会员状态；深度解读仅会员可调用（返回 403）。**当前为本地演示，未接入真实支付** |
 
 ## 技术栈
 
@@ -94,8 +95,17 @@ src/ai/interpreter.js     # AI 解读层
 src/routes/api.js         # API 路由
 public/                   # Web 前端单页（含历史/收藏记录中心）
 miniprogram/              # 微信小程序壳（前端，调用上面后端 API）
-test/run.js               # 测试（24 项）
+test/run.js               # 测试（27 项）
 ```
+
+## 商业化与上线（M7）
+
+采用 **Freemium 免费增值** 模型：13 个体系的「基础解读」全部免费；「会员」解锁每个体系的「💎 会员专享·深度延展」进阶内容。
+
+- Web 端「会员」Tab、小程序「会员」页均可演示「开通 → 解锁深度解读」完整闭环。
+- 后端已落地会员状态与 `deep` 深度解读鉴权（非会员调用深度解读返回 403），但**当前为本地演示，未接入真实支付**（`store.js` 中 `demo:true` 标记）。
+- 上线前需接微信支付（小程序）/ 苹果内购（iOS），并补齐 ICP 备案、增值电信许可证等资质。
+- 完整方案、定价建议、合规红线与上线清单见 `docs/M7-商业化与上线.md`；部署步骤见 `docs/DEPLOY.md`。
 
 ## 合规说明
 

@@ -94,8 +94,20 @@ async function handleApi(path, body, ctx = {}) {
     }
     if (path === '/api/reading' || path === '/api/fortune/reading') {
       if (!body || !body.system) return fail(400, '缺少 system 字段');
-      const reading = await generateReading({ system: body.system, data: body.data, question: body.question });
+      const deep = !!body.deep;
+      if (deep) {
+        const m = store.getMembership(clientId);
+        if (!m || m.tier !== 'vip') return fail(403, '深度解读为会员专享，请先开通会员');
+      }
+      const reading = await generateReading({ system: body.system, data: body.data, question: body.question, deep });
       return ok(reading);
+    }
+    // ===== 会员 / 商业化（本地演示，未接入真实支付）=====
+    if (path === '/api/membership' && method === 'GET') return ok(store.getMembership(clientId));
+    if (path === '/api/membership/upgrade' && method === 'POST') {
+      const plan = (body && body.plan) || 'monthly';
+      if (!store.PLANS[plan]) return fail(400, 'plan 仅支持 monthly / yearly');
+      return ok(store.upgradeMembership(clientId, plan));
     }
     return fail(404, '未知接口: ' + path);
   } catch (e) {

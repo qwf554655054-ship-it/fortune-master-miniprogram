@@ -1,0 +1,16 @@
+.member { padding: 16px; }
+.card { background: #fffdf8; border: 1px solid #eadfca; border-radius: 14px; padding: 16px; margin-bottom: 12px; box-shadow: 0 4px 14px rgba(0,0,0,.05); }
+.status-title { font-size: 14px; color: #6b4420; margin-bottom: 8px; }
+.vip, .free { font-size: 17px; font-weight: 700; margin-bottom: 6px; }
+.vip { color: #c79a4b; }
+.free { color: #8a7d6d; }
+.expire, .desc { font-size: 13px; color: #3a2f25; line-height: 1.7; }
+.plans { display: flex; gap: 12px; }
+.plan { flex: 1; text-align: center; }
+.plan-label { font-size: 15px; color: #6b4420; font-weight: 700; }
+.plan-price { font-size: 18px; font-weight: 700; color: #c79a4b; margin: 6px 0 12px; }
+.primary { background: #8b5a2b; color: #fff; border: none; border-radius: 8px; font-size: 14px; padding: 8px 0; }
+.note { font-size: 12px; color: #8a7d6d; line-height: 1.7; background: #faf6ee; border-radius: 10px; padding: 10px 14px; margin-top: 4px; }
+.strong { color: #c0392b; font-weight: 700; }
+.toast { text-align: center; color: #2e7d4f; font-size: 13px; margin-top: 10px; }
+.error { text-align: center; color: #c0392b; font-size: 13px; margin-top: 10px; }

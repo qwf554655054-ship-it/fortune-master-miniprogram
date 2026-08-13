@@ -3,7 +3,8 @@
     "pages/index/index",
     "pages/calc/calc",
     "pages/records/records",
-    "pages/about/about"
+    "pages/about/about",
+    "pages/member/member"
   ],
   "window": {
     "navigationBarBackgroundColor": "#2b2118",
@@ -23,6 +24,10 @@
       {
         "pagePath": "pages/records/records",
         "text": "我的"
+      },
+      {
+        "pagePath": "pages/member/member",
+        "text": "会员"
       }
     ]
   },

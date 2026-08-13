@@ -18,6 +18,7 @@ const { calculateAnnual, calculateMonthly } = require('../src/pan/annual');
 const { calculateXingzhan } = require('../src/pan/xingzhan');
 const store = require('../src/store');
 const { generateReading } = require('../src/ai/interpreter');
+const { handleApi } = require('../src/routes/api');
 
 let pass = 0, fail = 0;
 async function test(name, fn) {
@@ -249,6 +250,48 @@ async function main() {
     assert.deepStrictEqual(store.listHistory(cid), []);
     assert.strictEqual(store.deleteFavorite(cid, f.id), true);
     assert.deepStrictEqual(store.listFavorites(cid), []);
+  });
+
+  // ===== M7 商业化：会员 / 深度解读鉴权 =====
+  await test('会员：默认免费、模拟开通后为 VIP（含 demo 标记）', () => {
+    const cid = 'm7-' + Date.now();
+    const before = store.getMembership(cid);
+    assert.strictEqual(before.tier, 'free');
+    assert.strictEqual(before.demo, true);
+    const after = store.upgradeMembership(cid, 'yearly');
+    assert.strictEqual(after.tier, 'vip');
+    assert.strictEqual(after.plan, 'yearly');
+    assert.ok(after.expireAt, '应有过期时间');
+    const re = store.getMembership(cid);
+    assert.strictEqual(re.tier, 'vip');
+  });
+
+  await test('API：深度解读非会员返回 403，会员返回含「深度延展」', async () => {
+    const cid = 'm7-auth-' + Date.now();
+    const ctx = { method: 'POST', headers: { 'x-client-id': cid } };
+    const baziChart = calculateBAZI({ year: 1990, month: 5, day: 20, hour: 14, minute: 30, gender: 'male' });
+    // 非会员请求深度解读
+    const deny = await handleApi('/api/reading', { system: 'bazi', data: baziChart, deep: true }, ctx);
+    assert.strictEqual(deny.status, 403, '非会员深度解读应被拒');
+    // 开通会员
+    const up = await handleApi('/api/membership/upgrade', { plan: 'monthly' }, ctx);
+    assert.strictEqual(up.status, 200);
+    assert.strictEqual(up.json.data.tier, 'vip');
+    // 会员请求深度解读
+    const okDeep = await handleApi('/api/reading', { system: 'bazi', data: baziChart, deep: true }, ctx);
+    assert.strictEqual(okDeep.status, 200);
+    assert.strictEqual(okDeep.json.data.deep, true);
+    assert.ok(okDeep.json.data.sections.some((s) => s.title.indexOf('深度延展') >= 0), '应包含深度延展段落');
+  });
+
+  await test('API：会员状态查询与非法 plan 校验', async () => {
+    const cid = 'm7-plan-' + Date.now();
+    const ctx = { method: 'GET', headers: { 'x-client-id': cid } };
+    const status = await handleApi('/api/membership', null, ctx);
+    assert.strictEqual(status.status, 200);
+    assert.strictEqual(status.json.data.tier, 'free');
+    const bad = await handleApi('/api/membership/upgrade', { plan: 'xxx' }, { method: 'POST', headers: { 'x-client-id': cid } });
+    assert.strictEqual(bad.status, 400, '非法 plan 应 400');
   });
 
   console.log(`\n结果：通过 ${pass} / 失败 ${fail}`);

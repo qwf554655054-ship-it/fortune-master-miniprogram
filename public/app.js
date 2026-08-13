@@ -12,6 +12,7 @@ document.querySelectorAll('.tab').forEach((t) => {
     document.querySelectorAll('.panel').forEach((x) => x.classList.remove('active'));
     t.classList.add('active');
     el('panel-' + t.dataset.tab).classList.add('active');
+    if (t.dataset.tab === 'member') loadMembership();
   });
 });
 
@@ -22,6 +23,8 @@ if (!clientId) { clientId = Math.random().toString(36).slice(2) + Date.now().toS
 const SYSTEM_LABEL = { bazi: '八字排盘', ziwei: '紫微斗数', zodiac: '生肖运势', daily: '每日运势', numerology: '数字命理', tarot: '塔罗占卜', yijing: '六爻起卦', qimen: '奇门择吉', fengshui: '风水八宅', relationship: '关系合盘', annual: '生肖年运', monthly: '月运', xingzhan: '星盘占星' };
 
 let lastRecord = null; // 最近一次成功测算的上下文（供收藏/分享）
+let membershipState = { tier: 'free' }; // 会员状态（会员/VIP），由 /api/membership 加载
+let lastCalc = null; // 最近一次测算的 {system, data}，供「深度解读」复用
 
 async function apiFetch(url, opts) {
   opts = opts || {};
@@ -126,7 +129,7 @@ el('bazi-btn').addEventListener('click', async () => {
     rc.innerHTML = '<h3>命理解读</h3><p>生成中…</p>';
     out.appendChild(rc);
     const reading = await postJSON('/api/reading', { system: 'bazi', data: d });
-    if (reading.ok) renderSections(rc, reading.data.sections);
+    if (reading.ok) { lastCalc = { system: reading.data.system, data: reading.data.data || d }; renderSections(rc, reading.data.sections); renderDeepCTA(rc); }
   } catch (e) {
     renderError(out, '请求失败：' + e.message);
   }
@@ -156,7 +159,7 @@ el('zodiac-btn').addEventListener('click', async () => {
     rc.innerHTML = '<h3>运势解读</h3><p>生成中…</p>';
     out.appendChild(rc);
     const reading = await postJSON('/api/reading', { system: 'zodiac', data: d });
-    if (reading.ok) renderSections(rc, reading.data.sections);
+    if (reading.ok) { lastCalc = { system: reading.data.system, data: reading.data.data || d }; renderSections(rc, reading.data.sections); renderDeepCTA(rc); }
   } catch (e) {
     renderError(out, '请求失败：' + e.message);
   }
@@ -192,7 +195,7 @@ el('ziwei-btn').addEventListener('click', async () => {
     rc.innerHTML = '<h3>命理解读</h3><p>生成中…</p>';
     out.appendChild(rc);
     const reading = await postJSON('/api/reading', { system: 'ziwei', data: d });
-    if (reading.ok) renderSections(rc, reading.data.sections);
+    if (reading.ok) { lastCalc = { system: reading.data.system, data: reading.data.data || d }; renderSections(rc, reading.data.sections); renderDeepCTA(rc); }
   } catch (e) { renderError(out, '请求失败：' + e.message); }
 });
 
@@ -220,7 +223,7 @@ el('daily-btn').addEventListener('click', async () => {
     rc.innerHTML = '<h3>运势解读</h3><p>生成中…</p>';
     out.appendChild(rc);
     const reading = await postJSON('/api/reading', { system: 'daily', data: d });
-    if (reading.ok) renderSections(rc, reading.data.sections);
+    if (reading.ok) { lastCalc = { system: reading.data.system, data: reading.data.data || d }; renderSections(rc, reading.data.sections); renderDeepCTA(rc); }
   } catch (e) { renderError(out, '请求失败：' + e.message); }
 });
 
@@ -245,7 +248,7 @@ el('numerology-btn').addEventListener('click', async () => {
     rc.innerHTML = '<h3>数字解读</h3><p>生成中…</p>';
     out.appendChild(rc);
     const reading = await postJSON('/api/reading', { system: 'numerology', data: d });
-    if (reading.ok) renderSections(rc, reading.data.sections);
+    if (reading.ok) { lastCalc = { system: reading.data.system, data: reading.data.data || d }; renderSections(rc, reading.data.sections); renderDeepCTA(rc); }
   } catch (e) { renderError(out, '请求失败：' + e.message); }
 });
 el('tarot-btn').addEventListener('click', async () => {
@@ -269,7 +272,7 @@ el('tarot-btn').addEventListener('click', async () => {
     rc.innerHTML = '<h3>综合解读</h3><p>生成中…</p>';
     out.appendChild(rc);
     const reading = await postJSON('/api/reading', { system: 'tarot', data: d, question });
-    if (reading.ok) renderSections(rc, reading.data.sections);
+    if (reading.ok) { lastCalc = { system: reading.data.system, data: reading.data.data || d }; renderSections(rc, reading.data.sections); renderDeepCTA(rc); }
   } catch (e) {
     renderError(out, '请求失败：' + e.message);
   }
@@ -309,7 +312,7 @@ el('yijing-btn').addEventListener('click', async () => {
     rc.innerHTML = '<h3>卦象解读</h3><p>生成中…</p>';
     out.appendChild(rc);
     const reading = await postJSON('/api/reading', { system: 'yijing', data: d, question: el('yijing-q').value.trim() });
-    if (reading.ok) renderSections(rc, reading.data.sections);
+    if (reading.ok) { lastCalc = { system: reading.data.system, data: reading.data.data || d }; renderSections(rc, reading.data.sections); renderDeepCTA(rc); }
   } catch (e) { renderError(out, '请求失败：' + e.message); }
 });
 
@@ -341,7 +344,7 @@ el('qimen-btn').addEventListener('click', async () => {
     rc.innerHTML = '<h3>用事解读</h3><p>生成中…</p>';
     out.appendChild(rc);
     const reading = await postJSON('/api/reading', { system: 'qimen', data: d });
-    if (reading.ok) renderSections(rc, reading.data.sections);
+    if (reading.ok) { lastCalc = { system: reading.data.system, data: reading.data.data || d }; renderSections(rc, reading.data.sections); renderDeepCTA(rc); }
   } catch (e) { renderError(out, '请求失败：' + e.message); }
 });
 
@@ -369,7 +372,7 @@ el('fengshui-btn').addEventListener('click', async () => {
     rc.innerHTML = '<h3>风水解读</h3><p>生成中…</p>';
     out.appendChild(rc);
     const reading = await postJSON('/api/reading', { system: 'fengshui', data: d });
-    if (reading.ok) renderSections(rc, reading.data.sections);
+    if (reading.ok) { lastCalc = { system: reading.data.system, data: reading.data.data || d }; renderSections(rc, reading.data.sections); renderDeepCTA(rc); }
   } catch (e) { renderError(out, '请求失败：' + e.message); }
 });
 
@@ -393,7 +396,7 @@ el('relationship-btn').addEventListener('click', async () => {
     rc.innerHTML = '<h3>合盘解读</h3><p>生成中…</p>';
     out.appendChild(rc);
     const reading = await postJSON('/api/reading', { system: 'relationship', data: d });
-    if (reading.ok) renderSections(rc, reading.data.sections);
+    if (reading.ok) { lastCalc = { system: reading.data.system, data: reading.data.data || d }; renderSections(rc, reading.data.sections); renderDeepCTA(rc); }
   } catch (e) { renderError(out, '请求失败：' + e.message); }
 });
 
@@ -421,7 +424,7 @@ el('annual-btn').addEventListener('click', async () => {
     rc.innerHTML = '<h3>年运解读</h3><p>生成中…</p>';
     out.appendChild(rc);
     const reading = await postJSON('/api/reading', { system: 'annual', data: d });
-    if (reading.ok) renderSections(rc, reading.data.sections);
+    if (reading.ok) { lastCalc = { system: reading.data.system, data: reading.data.data || d }; renderSections(rc, reading.data.sections); renderDeepCTA(rc); }
   } catch (e) { renderError(out, '请求失败：' + e.message); }
 });
 
@@ -449,7 +452,7 @@ el('monthly-btn').addEventListener('click', async () => {
     rc.innerHTML = '<h3>月运解读</h3><p>生成中…</p>';
     out.appendChild(rc);
     const reading = await postJSON('/api/reading', { system: 'monthly', data: d });
-    if (reading.ok) renderSections(rc, reading.data.sections);
+    if (reading.ok) { lastCalc = { system: reading.data.system, data: reading.data.data || d }; renderSections(rc, reading.data.sections); renderDeepCTA(rc); }
   } catch (e) { renderError(out, '请求失败：' + e.message); }
 });
 
@@ -487,7 +490,7 @@ el('xingzhan-btn').addEventListener('click', async () => {
     rc.innerHTML = '<h3>星盘解读</h3><p>生成中…</p>';
     out.appendChild(rc);
     const reading = await postJSON('/api/reading', { system: 'xingzhan', data: d });
-    if (reading.ok) renderSections(rc, reading.data.sections);
+    if (reading.ok) { lastCalc = { system: reading.data.system, data: reading.data.data || d }; renderSections(rc, reading.data.sections); renderDeepCTA(rc); }
   } catch (e) { renderError(out, '请求失败：' + e.message); }
 });
 
@@ -624,6 +627,82 @@ function buildShareCard(b) {
   el('bazi-result').appendChild(holder);
 }
 
+// ===== 会员 / 商业化（本地演示，未接入真实支付）=====
+async function loadMembership() {
+  try {
+    const m = await apiFetch('/api/membership');
+    if (m && m.ok) membershipState = m.data || { tier: 'free' };
+  } catch (e) { membershipState = { tier: 'free' }; }
+  renderMemberPanel();
+}
+
+function renderMemberPanel() {
+  const out = el('member-result');
+  if (!out) return;
+  out.innerHTML = '';
+  const isVip = membershipState.tier === 'vip';
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML =
+    `<h3>会员状态</h3>` +
+    `<p>${isVip ? '💎 你已是 <strong>VIP 会员</strong>' : '🆓 当前为 <strong>免费用户</strong>'}</p>` +
+    (isVip && membershipState.expireAt ? `<p>有效期至：${new Date(membershipState.expireAt).toLocaleDateString()}</p>` : '') +
+    (isVip ? '<p>已解锁：全部 13 个体系的「会员专享·深度延展」解读。</p>' : '<p>开通会员可解锁每个测算的「深度延展」专属解读。</p>');
+  out.appendChild(card);
+
+  const plans = el('member-plans');
+  plans.innerHTML = '';
+  if (!isVip) {
+    const mk = (key, price, label) => {
+      const p = document.createElement('div');
+      p.className = 'plan-card';
+      p.innerHTML = `<h4>${label}</h4><p class="price">${price}</p><button class="primary" data-plan="${key}">开通</button>`;
+      plans.appendChild(p);
+    };
+    mk('monthly', '¥19.9 / 月', '月度会员');
+    mk('yearly', '¥199 / 年', '年度会员');
+  } else {
+    const p = document.createElement('div');
+    p.className = 'plan-card';
+    p.innerHTML = '<h4>会员已开通</h4><p class="price">感谢你的支持 ✦</p>';
+    plans.appendChild(p);
+  }
+  plans.querySelectorAll('button[data-plan]').forEach((b) => {
+    b.onclick = async () => {
+      const r = await apiFetch('/api/membership/upgrade', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ plan: b.dataset.plan }) });
+      if (r.ok) { membershipState = r.data; renderMemberPanel(); alert('演示开通成功（本地模拟，未真实扣费）'); }
+      else renderError(out, (r.json && r.json.error) || r.error || '开通失败');
+    };
+  });
+}
+
+// 测算结果区的会员 CTA：VIP 可看深度解读，非 VIP 引导开通
+function renderDeepCTA(container) {
+  if (!container) return;
+  const cta = document.createElement('div');
+  cta.className = 'member-cta';
+  if (membershipState.tier === 'vip') {
+    const btn = document.createElement('button');
+    btn.className = 'primary';
+    btn.textContent = '🔓 查看会员深度解读';
+    btn.onclick = async () => {
+      if (!lastCalc) return;
+      btn.disabled = true; btn.textContent = '生成中…';
+      const r = await postJSON('/api/reading', { system: lastCalc.system, data: lastCalc.data, deep: true });
+      if (r.ok) { container.innerHTML = ''; renderSections(container, r.data.sections); renderDeepCTA(container); }
+      else renderError(container, r.error || '深度解读生成失败');
+    };
+    cta.appendChild(btn);
+  } else {
+    const btn = document.createElement('button');
+    btn.className = 'primary';
+    btn.textContent = '💎 开通会员解锁深度解读';
+    btn.onclick = () => { const t = document.querySelector('[data-tab="member"]'); if (t) t.click(); };
+    cta.appendChild(btn);
+  }
+  container.appendChild(cta);
+}
+
 // ===== 合规：免责声明弹层 + 未成年人首访提示 =====
 function setupCompliance() {
   const link = el('disclaimer-link');
@@ -646,4 +725,5 @@ setupCompliance();
 // 初始化加载记录
 loadHistory();
 loadFavorites();
+loadMembership();
 
