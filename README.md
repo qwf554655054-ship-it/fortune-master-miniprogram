@@ -20,6 +20,9 @@
 | 奇门择吉 | `/api/qimen` | 阴阳遁、局数、八门吉凶方位（演示版） |
 | 风水八宅 | `/api/fengshui` | 本命卦、东四/西四命、吉凶方位、择日提示 |
 | 关系合盘 | `/api/relationship` | 生肖六合/三合/冲/害/刑 + 年命五行生克评分 |
+| 年运 | `/api/annual` | 流年生肖关系（本命/冲/六合/平稳）+ 当年 12 个月逐月概要、最佳/最需谨慎月 |
+| 月运 | `/api/monthly` | 指定年月的生肖流月关系与运势提示 |
+| 用户存储 | `/api/user/history` `/api/user/favorites` | 按 `X-Client-Id` 分用户保存历史记录与收藏（本地 JSON，上限 50 条） |
 | 命理解读 | `/api/reading` | 按体系生成结构化解读（LLM 优先，失败/未配置自动回退规则模板） |
 
 ## 技术栈
@@ -58,11 +61,13 @@ server.js                 # HTTP 服务入口（静态 + /api）
 src/pan/bazi.js           # 八字排盘
 src/pan/zodiac.js         # 生肖运势
 src/pan/tarot.js          # 塔罗占卜
+src/pan/annual.js         # 年运/月运
+src/store.js              # 本地用户存储层（历史/收藏，按 clientId）
 src/knowledge/            # 知识层（框架文档 + 索引）
 src/ai/interpreter.js     # AI 解读层
 src/routes/api.js         # API 路由
-public/                   # 前端单页
-test/run.js               # 测试
+public/                   # 前端单页（含历史/收藏记录中心）
+test/run.js               # 测试（21 项）
 ```
 
 ## 合规说明
