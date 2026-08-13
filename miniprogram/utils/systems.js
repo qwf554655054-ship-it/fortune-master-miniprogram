@@ -12,7 +12,8 @@ const SYSTEMS = [
   { key: 'fengshui',     name: '风水八宅', endpoint: '/api/fengshui',     fields: ['year', 'gender'] },
   { key: 'relationship', name: '关系合盘', endpoint: '/api/relationship', fields: ['yearA', 'yearB'] },
   { key: 'annual',       name: '年运',     endpoint: '/api/annual',       fields: ['year', 'targetYear'] },
-  { key: 'monthly',      name: '月运',     endpoint: '/api/monthly',      fields: ['year', 'targetYear', 'targetMonth'] }
+  { key: 'monthly',      name: '月运',     endpoint: '/api/monthly',      fields: ['year', 'targetYear', 'targetMonth'] },
+  { key: 'xingzhan',     name: '星盘占星', endpoint: '/api/xingzhan',     fields: ['year', 'month', 'day', 'hour', 'minute'] }
 ];
 
 // 字段定义：label 展示名、type 输入类型、placeholder/picker 选项

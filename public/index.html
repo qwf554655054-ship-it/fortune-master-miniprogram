@@ -9,7 +9,7 @@
 <body>
   <header class="app-header">
     <h1>命理测算</h1>
-    <p class="subtitle">八字 · 紫微 · 生肖 · 日运 · 数秘 · 塔罗</p>
+    <p class="subtitle">八字 · 紫微 · 生肖 · 日运 · 数秘 · 塔罗 · 星盘</p>
     <p class="disclaimer">本工具仅供娱乐与自我觉察，不构成任何专业建议 · <a id="disclaimer-link" class="link">免责声明</a></p>
   </header>
 
@@ -31,6 +31,7 @@
     <button class="tab" data-tab="relationship">关系合盘</button>
     <button class="tab" data-tab="annual">生肖年运</button>
     <button class="tab" data-tab="monthly">月运</button>
+    <button class="tab" data-tab="xingzhan">星盘占星</button>
   </nav>
 
   <main>
@@ -171,6 +172,16 @@
         <button class="primary" id="monthly-btn">查看月运</button>
       </div>
       <div class="result" id="monthly-result"></div>
+    </section>
+
+    <!-- 星盘 / 西方占星 -->
+    <section class="panel" id="panel-xingzhan">
+      <div class="form">
+        <label>出生日期<input type="date" id="xingzhan-date" value="1990-05-20" /></label>
+        <label>出生时间<input type="time" id="xingzhan-time" value="14:30" /></label>
+        <button class="primary" id="xingzhan-btn">排星盘</button>
+      </div>
+      <div class="result" id="xingzhan-result"></div>
     </section>
   </main>
 

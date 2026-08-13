@@ -14,6 +14,7 @@ const { calculateQimen } = require('../pan/qimen');
 const { calculateFengshui } = require('../pan/fengshui');
 const { calculateRelationship } = require('../pan/relationship');
 const { calculateAnnual, calculateMonthly } = require('../pan/annual');
+const { calculateXingzhan } = require('../pan/xingzhan');
 const store = require('../store');
 const { generateReading } = require('../ai/interpreter');
 
@@ -73,6 +74,10 @@ async function handleApi(path, body, ctx = {}) {
     if (path === '/api/monthly' || path === '/api/fortune/monthly') {
       const m = calculateMonthly(body || {});
       return ok(m);
+    }
+    if (path === '/api/xingzhan' || path === '/api/fortune/xingzhan') {
+      const x = calculateXingzhan(body || {});
+      return ok(x);
     }
     // 用户存储：历史 / 收藏（clientId 经 X-Client-Id 头传递）
     if (path === '/api/user/history' && method === 'GET') return ok(store.listHistory(clientId));

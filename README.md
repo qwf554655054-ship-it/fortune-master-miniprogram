@@ -22,12 +22,13 @@
 | 关系合盘 | `/api/relationship` | 生肖六合/三合/冲/害/刑 + 年命五行生克评分 |
 | 年运 | `/api/annual` | 流年生肖关系（本命/冲/六合/平稳）+ 当年 12 个月逐月概要、最佳/最需谨慎月 |
 | 月运 | `/api/monthly` | 指定年月的生肖流月关系与运势提示 |
+| 星盘占星 | `/api/xingzhan` | 西方占星：十大行星地心黄道经度、落座与度数、顺/逆行、五大主要相位（合/六分/四分/三分/对冲），基于 `astronomy-engine` 真实星历 |
 | 用户存储 | `/api/user/history` `/api/user/favorites` | 按 `X-Client-Id` 分用户保存历史记录与收藏（本地 JSON，上限 50 条） |
 | 命理解读 | `/api/reading` | 按体系生成结构化解读（LLM 优先，失败/未配置自动回退规则模板） |
 
 ## 技术栈
 
-- Node.js 内置 `http` 服务（**零额外依赖**，仅 `lunar-javascript` 用于排盘）
+- Node.js 内置 `http` 服务（**零额外依赖**，仅 `lunar-javascript`（东方针算）与 `astronomy-engine`（西占星历）用于排盘）
 - 前端：原生 HTML/CSS/JS 单页（移动端风格，可直接套微信小程序 WebView 或改造为小程序）
 - 知识库：Markdown 文档 + 索引模块
 - 测试：零依赖 `node test/run.js`
@@ -44,15 +45,15 @@ npm start          # 启动服务，默认 http://localhost:3000
 
 ## 微信小程序壳（`miniprogram/`）
 
-小程序本身**不做排盘计算**，仅作为前端调用本仓库的 Node 后端 API（`/api/*`），因此 12 个测算体系的全部逻辑都复用后端，无需重复实现。目录：
+小程序本身**不做排盘计算**，仅作为前端调用本仓库的 Node 后端 API（`/api/*`），因此 13 个测算体系的全部逻辑都复用后端，无需重复实现。目录：
 
 ```
 miniprogram/
   project.config.json     # 工程配置（appid 当前为 touristappid 占位，发布前需替换为你自己的 AppID）
   app.js / app.json / app.wxss
   utils/api.js            # wx.request 封装，注入 X-Client-Id
-  utils/systems.js        # 12 个体系的字段元数据 + 请求体构造
-  pages/index/            # 测算菜单（12 体系网格）
+  utils/systems.js        # 13 个体系的字段元数据 + 请求体构造
+  pages/index/            # 测算菜单（13 体系网格）
   pages/calc/             # 输入表单 → 调 /api/{system} 拿命盘 → 调 /api/reading 渲染解读
   pages/records/          # 历史 / 收藏（调 /api/user/history、/api/user/favorites）
 ```
@@ -86,13 +87,14 @@ src/pan/bazi.js           # 八字排盘
 src/pan/zodiac.js         # 生肖运势
 src/pan/tarot.js          # 塔罗占卜
 src/pan/annual.js         # 年运/月运
+src/pan/xingzhan.js       # 星盘占星（西方占星，astronomy-engine 真实星历）
 src/store.js              # 本地用户存储层（历史/收藏，按 clientId）
 src/knowledge/            # 知识层（框架文档 + 索引）
 src/ai/interpreter.js     # AI 解读层
 src/routes/api.js         # API 路由
 public/                   # Web 前端单页（含历史/收藏记录中心）
 miniprogram/              # 微信小程序壳（前端，调用上面后端 API）
-test/run.js               # 测试（21 项）
+test/run.js               # 测试（24 项）
 ```
 
 ## 合规说明

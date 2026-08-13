@@ -81,6 +81,16 @@ main { max-width: 640px; margin: 0 auto; padding: 16px; }
 .error { color: var(--accent); font-size: 14px; }
 .app-footer { text-align: center; font-size: 11px; color: var(--muted); padding: 20px; }
 
+/* 星盘：行星落座 / 相位 */
+.planet-list { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px; }
+.planet-item { display: flex; align-items: center; gap: 6px; background: #faf6ee; border-radius: 8px; padding: 6px 10px; font-size: 13px; }
+.planet-item .p-name { font-weight: 700; color: var(--primary-dark); }
+.planet-item .p-sign { color: var(--text); }
+.planet-item .p-retro { margin-left: auto; font-size: 11px; color: var(--accent); background: #fde8e6; border-radius: 6px; padding: 1px 6px; }
+.aspect-list { display: grid; gap: 6px; }
+.aspect-item { display: flex; align-items: center; gap: 6px; font-size: 13px; background: #faf6ee; border-radius: 8px; padding: 6px 10px; }
+.aspect-item .a-orb { margin-left: auto; font-size: 11px; color: var(--muted); }
+
 /* 合规：免责声明链接 / 未成年人提示 / 弹层 */
 .link { color: var(--gold); cursor: pointer; text-decoration: underline; }
 .minor-notice {

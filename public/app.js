@@ -19,7 +19,7 @@ document.querySelectorAll('.tab').forEach((t) => {
 let clientId = localStorage.getItem('fm_client');
 if (!clientId) { clientId = Math.random().toString(36).slice(2) + Date.now().toString(36); localStorage.setItem('fm_client', clientId); }
 
-const SYSTEM_LABEL = { bazi: '八字排盘', ziwei: '紫微斗数', zodiac: '生肖运势', daily: '每日运势', numerology: '数字命理', tarot: '塔罗占卜', yijing: '六爻起卦', qimen: '奇门择吉', fengshui: '风水八宅', relationship: '关系合盘', annual: '生肖年运', monthly: '月运' };
+const SYSTEM_LABEL = { bazi: '八字排盘', ziwei: '紫微斗数', zodiac: '生肖运势', daily: '每日运势', numerology: '数字命理', tarot: '塔罗占卜', yijing: '六爻起卦', qimen: '奇门择吉', fengshui: '风水八宅', relationship: '关系合盘', annual: '生肖年运', monthly: '月运', xingzhan: '星盘占星' };
 
 let lastRecord = null; // 最近一次成功测算的上下文（供收藏/分享）
 
@@ -453,6 +453,44 @@ el('monthly-btn').addEventListener('click', async () => {
   } catch (e) { renderError(out, '请求失败：' + e.message); }
 });
 
+// ===== 星盘 / 西方占星 =====
+el('xingzhan-btn').addEventListener('click', async () => {
+  const out = el('xingzhan-result');
+  out.innerHTML = '<div class="card"><p>排盘中…</p></div>';
+  const date = el('xingzhan-date').value;
+  const time = el('xingzhan-time').value || '00:00';
+  if (!date) { renderError(out, '请选择出生日期'); return; }
+  const [year, month, day] = date.split('-').map(Number);
+  const [hour, minute] = time.split(':').map(Number);
+  try {
+    const x = await postJSON('/api/xingzhan', { year, month, day, hour, minute });
+    if (!x.ok) { renderError(out, x.error); return; }
+    const d = x.data;
+    out.innerHTML = '';
+    // 行星落座概览
+    const pc = document.createElement('div');
+    pc.className = 'card';
+    pc.innerHTML = '<h3>行星落座</h3><div class="planet-list">' +
+      d.planets.map((p) => `<div class="planet-item"><span class="p-name">${p.name}</span><span class="p-sign">${p.sign} ${p.degreeInSign}°</span>${p.retrograde ? '<span class="p-retro">逆行</span>' : ''}</div>`).join('') +
+      `</div><p class="legend">太阳星座：${d.sunSign} · 月亮星座：${d.moonSign}</p>`;
+    out.appendChild(pc);
+    // 主要相位
+    const ac = document.createElement('div');
+    ac.className = 'card';
+    ac.innerHTML = '<h3>主要相位</h3>' + (d.aspects && d.aspects.length
+      ? '<div class="aspect-list">' + d.aspects.slice(0, 8).map((a) => `<div class="aspect-item">${a.a}（${a.aSign}）${a.type}${a.b}（${a.bSign}）<span class="a-orb">容许 ${a.orb}°</span></div>`).join('') + '</div>'
+      : '<p>本次未检测到显著紧密相位。</p>');
+    out.appendChild(ac);
+    // 解读
+    const rc = document.createElement('div');
+    rc.className = 'card';
+    rc.innerHTML = '<h3>星盘解读</h3><p>生成中…</p>';
+    out.appendChild(rc);
+    const reading = await postJSON('/api/reading', { system: 'xingzhan', data: d });
+    if (reading.ok) renderSections(rc, reading.data.sections);
+  } catch (e) { renderError(out, '请求失败：' + e.message); }
+});
+
 // ===== 历史 / 收藏 =====
 async function loadHistory() {
   try {
@@ -518,6 +556,7 @@ function restoreParams(system, p) {
     else if (system === 'numerology') { set('numerology-date', p.year + '-' + pad(p.month) + '-' + pad(p.day)); el('numerology-btn').click(); }
     else if (system === 'annual') { set('annual-year', p.year); set('annual-target', p.targetYear || ''); el('annual-btn').click(); }
     else if (system === 'monthly') { set('monthly-year', p.year); set('monthly-target', p.targetYear || ''); set('monthly-month', p.month || ''); el('monthly-btn').click(); }
+    else if (system === 'xingzhan') { set('xingzhan-date', p.year + '-' + pad(p.month) + '-' + pad(p.day)); set('xingzhan-time', pad(p.hour || 0) + ':' + pad(p.minute || 0)); el('xingzhan-btn').click(); }
     else if (system === 'fengshui') { set('fengshui-year', p.year); set('fengshui-gender', p.gender || 'male'); set('fengshui-date', p.date || ''); el('fengshui-btn').click(); }
     else if (system === 'relationship') { set('rel-a-year', p.a ? p.a.year : ''); set('rel-b-year', p.b ? p.b.year : ''); el('relationship-btn').click(); }
     else if (system === 'qimen') { set('qimen-date', p.date || ''); el('qimen-btn').click(); }

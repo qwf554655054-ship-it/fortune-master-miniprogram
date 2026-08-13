@@ -292,6 +292,67 @@ function ruleMonthly(data, question) {
   return sections;
 }
 
+const SIGN_MEANING = {
+  白羊: '行动力强、直率敢闯，重视自我与开创。',
+  金牛: '稳健务实、重安全感与美感，耐心而固执。',
+  双子: '机智善变、好奇心强，擅长沟通与学习。',
+  巨蟹: '细腻顾家、重情感与庇护，敏感而念旧。',
+  狮子: '自信大方、有领导力与表现欲，重尊严。',
+  处女: '细致周到、务实求真，追求秩序与完善。',
+  天秤: '和谐优雅、重关系与公平，善于协调。',
+  天蝎: '深刻专注、洞察力强，情感强烈而隐忍。',
+  射手: '乐观豁达、热爱自由与探索，直率而理想化。',
+  摩羯: '自律负责、重现实成就，坚韧而有规划。',
+  水瓶: '独立前卫、重理念与群体，理性而独特。',
+  双鱼: '温柔多感、富有想象与共情，灵性而模糊。',
+};
+const ASPECT_MEANING = {
+  合相: '能量聚焦、强化该主题，影响显著。',
+  六分相: '温和的机遇与和谐助力，顺手可得。',
+  四分相: '内在张力与挑战，促使成长与行动。',
+  三分相: '顺畅的才华与好运流向，轻松发挥。',
+  对冲: '对立与拉扯，需平衡两极、借关系照见自己。',
+};
+const PERSONAL = ['sun', 'moon', 'mercury', 'venus', 'mars'];
+const SOCIAL = ['jupiter', 'saturn'];
+
+function ruleXingzhan(data, question) {
+  const sections = [];
+  const byKey = {};
+  data.planets.forEach((p) => { byKey[p.key] = p; });
+  const sun = byKey.sun, moon = byKey.moon;
+
+  sections.push({
+    title: '总断',
+    content: `太阳落在${sun.sign}（${sun.degreeInSign}°）：${SIGN_MEANING[sun.sign]}月亮落在${moon.sign}（${moon.degreeInSign}°）：${SIGN_MEANING[moon.sign]}太阳代表你的核心自我与意志方向，月亮代表内在情绪与潜意识需求。`,
+  });
+
+  const personal = PERSONAL.map((k) => {
+    const p = byKey[k];
+    return `${p.name}·${p.sign}${p.retrograde ? '（逆行）' : ''}`;
+  }).join('，');
+  sections.push({ title: '个人行星（日/月/水/金/火）', content: personal + '。这些行星塑造你的性格、表达与行动方式。' });
+
+  const social = SOCIAL.concat(['uranus', 'neptune', 'pluto']).map((k) => {
+    const p = byKey[k];
+    return `${p.name}·${p.sign}${p.retrograde ? '（逆行）' : ''}`;
+  }).join('，');
+  sections.push({ title: '社会与世代行星（木/土/天/海/冥）', content: social + '。木土影响价值观与责任，天海冥代表时代群体课题（世代行星常被多颗同时逆行，属常态）。' });
+
+  if (data.aspects && data.aspects.length) {
+    const top = data.aspects.slice(0, 6).map((a) => `· ${a.a}（${a.aSign}）${a.type}${a.b}（${a.bSign}）：${ASPECT_MEANING[a.type]}（容许度 ${a.orb}°）`).join('\n');
+    sections.push({ title: '重点相位', content: `共检测到 ${data.aspects.length} 组主要相位，择其紧密者：\n${top}` });
+  } else {
+    sections.push({ title: '重点相位', content: '本次未检测到显著的紧密相位。' });
+  }
+
+  sections.push({
+    title: '声明',
+    content: '以上星盘为基于出生时刻的趣味推演，仅供娱乐与自我觉察，不构成任何专业建议；精确的占星还需结合上升、宫位、时区与出生地。人生走向仍取决于你的选择与行动。',
+  });
+  return sections;
+}
+
 function ruleGenerate(system, data, question) {
   if (system === 'bazi') return ruleBazi(data, question);
   if (system === 'ziwei') return ruleZiwei(data, question);
@@ -305,6 +366,7 @@ function ruleGenerate(system, data, question) {
   if (system === 'relationship') return ruleRelationship(data, question);
   if (system === 'annual') return ruleAnnual(data, question);
   if (system === 'monthly') return ruleMonthly(data, question);
+  if (system === 'xingzhan') return ruleXingzhan(data, question);
   return [{ title: '提示', content: '该体系暂仅支持规则解读。' }];
 }
 

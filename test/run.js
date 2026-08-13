@@ -15,6 +15,7 @@ const { calculateQimen } = require('../src/pan/qimen');
 const { calculateFengshui } = require('../src/pan/fengshui');
 const { calculateRelationship } = require('../src/pan/relationship');
 const { calculateAnnual, calculateMonthly } = require('../src/pan/annual');
+const { calculateXingzhan } = require('../src/pan/xingzhan');
 const store = require('../src/store');
 const { generateReading } = require('../src/ai/interpreter');
 
@@ -207,6 +208,32 @@ async function main() {
     const m = calculateMonthly({ year: 1990, targetYear: 2020, month: 5 });
     const rm = await generateReading({ system: 'monthly', data: m });
     assert.ok(rm.sections.length >= 2);
+  });
+
+  await test('星盘：1990-05-20 14:30 太阳金牛、月亮白羊，十大行星+相位', () => {
+    const x = calculateXingzhan({ year: 1990, month: 5, day: 20, hour: 14, minute: 30 });
+    assert.strictEqual(x.planets.length, 10, '应含十大行星');
+    const sun = x.planets.find((p) => p.key === 'sun');
+    const moon = x.planets.find((p) => p.key === 'moon');
+    assert.strictEqual(x.sunSign, '金牛');
+    assert.strictEqual(sun.sign, '金牛');
+    assert.strictEqual(x.moonSign, '白羊');
+    assert.strictEqual(moon.sign, '白羊');
+    assert.ok(x.aspects.length > 0, '应检测到主要相位');
+    assert.ok(x.aspects.every((a) => ['合相', '六分相', '四分相', '三分相', '对冲'].includes(a.type)));
+  });
+
+  await test('星盘：缺日期抛错', () => {
+    assert.throws(() => calculateXingzhan({ year: 1990 }), /请填写完整的出生日期/);
+  });
+
+  await test('解读层：星盘规则解读返回结构化段落（含蓄势声明）', async () => {
+    const x = calculateXingzhan({ year: 1990, month: 5, day: 20, hour: 14, minute: 30 });
+    const r = await generateReading({ system: 'xingzhan', data: x });
+    assert.strictEqual(r.source, 'rule');
+    assert.ok(r.sections.length >= 4, '星盘解读至少 4 段');
+    assert.ok(r.sections.some((s) => s.title === '总断'));
+    assert.ok(r.sections.some((s) => s.title === '声明'));
   });
 
   await test('存储层：历史/收藏 CRUD 正常', () => {

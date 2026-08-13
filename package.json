@@ -13,6 +13,7 @@
     "node": ">=18"
   },
   "dependencies": {
+    "astronomy-engine": "^2.1.19",
     "lunar-javascript": "^1.7.7"
   },
   "license": "MIT"
