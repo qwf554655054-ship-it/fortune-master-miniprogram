@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>隐私政策 · 命理测算</title>
+<style>
+  :root {
+    --bg: #f5f1e8; --card: #fffdf8; --primary: #8b5a2b; --primary-dark: #6b4420;
+    --accent: #c0392b; --text: #3a2f25; --muted: #8a7d6d; --gold: #c79a4b;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 20px 16px 60px; }
+  header.hero {
+    text-align: center; padding: 26px 16px 18px;
+    background: linear-gradient(160deg, #2b2118, #4a3826);
+    color: #f3e9d8; border-radius: 0 0 18px 18px; margin: -20px -16px 22px;
+  }
+  header.hero h1 { margin: 0; font-size: 20px; letter-spacing: 3px; }
+  header.hero p { margin: 8px 0 0; color: var(--gold); font-size: 12px; }
+  h2 { font-size: 16px; color: var(--primary-dark); border-left: 4px solid var(--gold); padding-left: 10px; margin: 26px 0 10px; }
+  p, li { font-size: 14px; color: #4a3f33; }
+  .card { background: var(--card); border: 1px solid #e7ddc9; border-radius: 12px; padding: 14px 16px; margin: 12px 0; box-shadow: 0 1px 3px rgba(0,0,0,.04); }
+  .muted { color: var(--muted); font-size: 12px; }
+  .tag { display: inline-block; background: #efe6d4; color: var(--primary); font-size: 12px; padding: 2px 8px; border-radius: 6px; margin-right: 6px; }
+  a { color: var(--primary); }
+  ul { padding-left: 20px; }
+  .footer { text-align: center; color: var(--muted); font-size: 12px; margin-top: 30px; }
+  .back { display: block; text-align: center; margin: 20px 0 0; }
+  .back a { text-decoration: none; background: var(--primary); color: #fff; padding: 10px 22px; border-radius: 24px; font-size: 14px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <h1>隐私政策</h1>
+    <p>命理测算小程序 · 最后更新：2026-08-14</p>
+  </header>
+
+  <div class="card">
+    <p class="muted">本《隐私政策》说明「命理测算」小程序（以下简称"本服务"）如何收集、使用、存储与保护你的信息。本服务由<strong>个人开发者</strong>独立开发与运营，未接入任何第三方广告或数据分析 SDK。</p>
+  </div>
+
+  <h2>一、我们收集的信息</h2>
+  <div class="card">
+    <p><span class="tag">主动输入</span>测算所需的出生时间、性别等参数。这些信息仅用于在本地或服务端生成命盘与解读文本，<strong>不会上传任何第三方</strong>，也不会用于营销或用户画像。</p>
+    <p><span class="tag">匿名标识</span>本服务会在你的设备上自动生成一个随机的 <code>clientId</code>（一串无意义的随机字符串），用于隔离不同用户的历史记录与收藏数据。该标识<strong>不关联你的真实身份、手机号或微信账号</strong>。</p>
+    <p><span class="tag">不收集</span>我们<strong>不申请、不收集</strong>你的真实姓名、手机号、身份证号、精确位置、通讯录、相册、麦克风、摄像头等敏感权限与个人信息。如微信平台要求声明权限用途，本服务默认不调用上述权限。</p>
+    <p><span class="tag">会员状态</span>会员（VIP）状态<strong>仅作本地模拟</strong>，当前版本<strong>未接入任何真实支付通道</strong>，因此我们不收集银行卡、微信支付凭证或任何支付信息。</p>
+  </div>
+
+  <h2>二、信息如何存储</h2>
+  <div class="card">
+    <p>你的测算历史、收藏默认保存在<strong>你设备本地</strong>（小程序本地存储）；当连接自建服务端时，数据按 <code>clientId</code> 隔离写入服务端本地 JSON 文件（<code>data/user.json</code>）。</p>
+    <p>服务端的数据目录已通过 <code>.gitignore</code> 排除，<strong>不会随代码提交到任何公开代码仓库</strong>。数据以明文 JSON 形式存储，仅用于单机演示或内测，公网部署时请自行启用 HTTPS 与访问控制。</p>
+  </div>
+
+  <h2>三、信息如何使用与共享</h2>
+  <div class="card">
+    <p>我们收集的信息<strong>仅用于</strong>：① 生成命盘与解读结果；② 在你的设备上展示历史与收藏。我们<strong>不会</strong>将你的信息用于用户画像、商业营销，也<strong>不会向任何第三方出售、出租或共享</strong>。</p>
+    <p>若你自行在服务端配置了 LLM（大模型）环境变量，解读文本可能经由你指定的模型服务生成；默认情况下本服务走<strong>本地规则模板</strong>，<strong>不调用任何外部网络服务</strong>。</p>
+  </div>
+
+  <h2>四、未成年人保护</h2>
+  <div class="card">
+    <p>本服务的所有测算结果均属<strong>娱乐与自我觉察性质</strong>。未满 18 周岁的用户应在监护人指导下使用，我们<strong>不向未成年人进行任何付费诱导</strong>。</p>
+  </div>
+
+  <h2>五、娱乐声明</h2>
+  <div class="card">
+    <p>本服务提供的全部内容（八字、紫微、生肖、塔罗、星盘等）<strong>仅供娱乐参考，不构成任何医疗、法律、财务、投资或人生决策建议</strong>。用户因参考本服务内容所做出的任何决定与行动，均由用户自行承担后果。</p>
+  </div>
+
+  <h2>六、你的权利</h2>
+  <div class="card">
+    <p>你享有以下权利，可随时行使：</p>
+    <ul>
+      <li><strong>查看与删除</strong>：在小程序内可随时删除单条或全部历史记录与收藏。</li>
+      <li><strong>数据导出/注销</strong>：如需彻底删除服务端存储的 <code>clientId</code> 相关数据或注销账户，可联系开发者，我们将在收到请求后 15 个工作日内处理。</li>
+      <li><strong>撤回</strong>：你可停止使用本服务并清除本地存储以撤回此前在本地的数据。</li>
+    </ul>
+  </div>
+
+  <h2>七、数据安全</h2>
+  <div class="card">
+    <p>我们采取合理的隔离措施（按 <code>clientId</code> 隔离）保护你的数据。但受技术所限，请知悉：本地明文存储与演示态服务端并不等同于金融级安全；请勿在公网环境长期以默认配置运行未加固的服务端。</p>
+  </div>
+
+  <h2>八、政策更新</h2>
+  <div class="card">
+    <p>我们可能不时更新本政策，更新后的版本将发布于本页面，并以"最后更新"日期标注。你继续使用本服务即视为接受更新后的政策。</p>
+  </div>
+
+  <h2>九、联系方式</h2>
+  <div class="card">
+    <p>如对本隐私政策有任何疑问或需行使上述权利，可通过小程序内"服务设置 → 关于"页面提供的联系方式与开发者沟通。</p>
+  </div>
+
+  <p class="footer">© 2026 命理测算（个人开发者）· 仅供娱乐 · 本页面为小程序上架所需的隐私政策说明</p>
+  <p class="back"><a href="/agreement.html">查看《用户协议》</a></p>
+</div>
+</body>
+</html>

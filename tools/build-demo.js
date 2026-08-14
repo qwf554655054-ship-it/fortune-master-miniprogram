@@ -62,6 +62,12 @@ async function main() {
   fs.copyFileSync(path.join(ROOT, 'public', 'style.css'), path.join(DIST, 'style.css'));
   fs.copyFileSync(path.join(ROOT, 'public', 'app.js'), path.join(DIST, 'app.js'));
 
+  // 复制法律页（隐私政策 / 用户协议）：同时作为小程序上架所需的隐私政策托管地址
+  for (const legal of ['privacy.html', 'agreement.html']) {
+    const srcLegal = path.join(ROOT, 'public', legal);
+    if (fs.existsSync(srcLegal)) fs.copyFileSync(srcLegal, path.join(DIST, legal));
+  }
+
   // 注入 engine.js + shim.js（必须在 app.js 之前）
   let html = fs.readFileSync(path.join(DIST, 'index.html'), 'utf8');
   const tag = '<script src="/app.js"></script>';

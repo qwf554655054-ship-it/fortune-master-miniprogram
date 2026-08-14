@@ -80,6 +80,8 @@ main { max-width: 640px; margin: 0 auto; padding: 16px; }
 .tarot-card .mean { font-size: 13px; margin-top: 8px; color: #ece1cf; }
 .error { color: var(--accent); font-size: 14px; }
 .app-footer { text-align: center; font-size: 11px; color: var(--muted); padding: 20px; }
+.app-footer .legal-links { margin-top: 6px; }
+.app-footer .legal-links a { color: var(--primary); text-decoration: none; }
 
 /* 星盘：行星落座 / 相位 */
 .planet-list { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px; }
