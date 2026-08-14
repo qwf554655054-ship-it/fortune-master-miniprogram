@@ -58,7 +58,7 @@ npm install && npm test && npm start   # http://localhost:3000
 
 ## 待办 / 风险
 1. ✅ **已推送远程**：2026-08-14 用户提供新 GitHub PAT，已将本地全部提交（MVP→M1+M3→M2→M5→M4→M6→星盘→M7，共 9 个提交，HEAD `bb03f93`）一次性推送至 `https://github.com/qwf554655054-ship-it/fortune-master-miniprogram`；推送后已清除本地配置中的 token，远程 URL 不再含凭据。
-2. 🔧 **SSH 免 PAT 推送已就绪（待用户最后一步）**：已生成 `~/.ssh/id_ed25519` 密钥对，并将远程改为 SSH 形式 `git@github.com:qwf554655054-ship-it/fortune-master-miniprogram.git`。因现有 GitHub 集成令牌无 `write:public_key` 权限（API 返回 404），公钥需由用户在 GitHub 网页端「Settings → SSH and GPG keys → New SSH key」手动添加（公钥见下方消息）。添加后无需任何 token 即可 `git push`。本提交 `e9f97a1` 已就位，待公钥生效后即可推送。
+2. ✅ **SSH 免 PAT 推送已生效**：已生成 `~/.ssh/id_ed25519` 密钥对，远程改为 SSH 形式 `git@github.com:qwf554655054-ship-it/fortune-master-miniprogram.git`。用户已在 GitHub 网页端添加公钥；`ssh -T git@github.com` 认证成功（Hi qwf554655054-ship-it），并成功 `git push -u origin main`，将 `e9f97a1` + `fecd34b` 推送至远程（54e4e6b..fecd34b），本地 `.git/config` 远程 URL 不含任何 token。后续推送均走 SSH，无需 PAT。
 2. ✅ **小程序功能已补齐完整**（2026-08-14）：收藏、会员深度解读、服务设置页（可视化配置后端地址）、分享、免责页、记录页会员状态；并修复了六爻起卦表单缺年月日时的问题。新增 `test/mp-run.js` 小程序端到端测试（mock wx/getApp + 路由真实后端），**19 项全绿**；后端 `test/run.js` **27 项全绿**。
 3. ⏳ M4 小程序壳需要用户填真实微信 AppID + 发布前配 HTTPS 域名白名单（工程内 `appid` 当前为 `touristappid` 占位，可在「服务设置」里配置后端地址）。
 4. 微信「算命/占卜/风水」类目资质（见上方合规风险）需用户自行办理。
