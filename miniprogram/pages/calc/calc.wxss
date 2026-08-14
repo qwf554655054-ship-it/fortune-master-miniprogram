@@ -70,3 +70,35 @@
   line-height: 1.75;
   white-space: pre-wrap;
 }
+
+.actions {
+  display: flex;
+  gap: 20rpx;
+  margin-top: 28rpx;
+}
+
+.act {
+  flex: 1;
+  background: #2e2418;
+  color: #e8c477;
+  border: 1rpx solid #4a3a26;
+  border-radius: 14rpx;
+  font-size: 26rpx;
+}
+
+.act-done {
+  color: #9c8c74;
+}
+
+.act-deep {
+  background: linear-gradient(160deg, #3a2c4a, #2a2034);
+  color: #d9b3ff;
+  border-color: #5a3a6a;
+}
+
+.toast {
+  margin-top: 24rpx;
+  text-align: center;
+  color: #8fd9a8;
+  font-size: 25rpx;
+}

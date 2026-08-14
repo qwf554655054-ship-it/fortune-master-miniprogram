@@ -7,13 +7,16 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
-    "test": "node test/run.js"
+    "test": "node test/run.js && node test/mp-run.js",
+    "test:api": "node test/run.js",
+    "test:mp": "node test/mp-run.js"
   },
   "engines": {
     "node": ">=18"
   },
   "dependencies": {
     "astronomy-engine": "^2.1.19",
+    "esbuild": "^0.21.5",
     "lunar-javascript": "^1.7.7"
   },
   "license": "MIT"

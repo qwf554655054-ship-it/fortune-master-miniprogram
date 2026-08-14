@@ -1,0 +1,26 @@
+<view class="page">
+  <view class="title">服务设置</view>
+
+  <view class="block">
+    <view class="label">后端服务地址（API Base）</view>
+    <input class="input" placeholder="如 https://your-domain.com 或 http://192.168.x.x:3000"
+           value="{{apiBase}}" data-key="apiBase" bindinput="onInput" />
+    <view class="hint">正式发布请填写已在微信后台加入 request 合法域名的 <text class="hl">https</text> 地址；本地调试可用局域网 IP 并在开发者工具勾选「不校验合法域名」。</view>
+
+    <view class="btns">
+      <button class="primary" bindtap="save">保存</button>
+      <button class="ghost" bindtap="test">连通性检测</button>
+    </view>
+
+    <view class="ok" wx:if="{{saved}}">✓ 已保存</view>
+    <view class="status" wx:if="{{status}}">{{status}}</view>
+    <view class="error" wx:if="{{error}}">{{error}}</view>
+  </view>
+
+  <view class="block">
+    <view class="label">关于地址</view>
+    <view class="p">本小程序自身不做排盘计算，所有测算逻辑由上述后端地址提供。<text class="hl">未配置或地址错误时，所有测算将失败。</text></view>
+    <view class="p">后端即为本仓库的 Node 服务（server.js）。可部署到任意支持 Node 的托管平台（Railway / Render / 云服务器）后，将地址填在此处。</view>
+    <view class="p">当前默认地址为 http://localhost:3000（仅开发者工具本地调试可用）。</view>
+  </view>
+</view>

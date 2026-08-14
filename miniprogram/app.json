@@ -4,7 +4,8 @@
     "pages/calc/calc",
     "pages/records/records",
     "pages/about/about",
-    "pages/member/member"
+    "pages/member/member",
+    "pages/settings/settings"
   ],
   "window": {
     "navigationBarBackgroundColor": "#2b2118",

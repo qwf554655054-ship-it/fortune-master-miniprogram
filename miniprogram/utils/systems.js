@@ -7,7 +7,7 @@ const SYSTEMS = [
   { key: 'daily',        name: '每日运势', endpoint: '/api/daily',        fields: ['year'] },
   { key: 'numerology',   name: '数字命理', endpoint: '/api/numerology',   fields: ['year', 'month', 'day'] },
   { key: 'tarot',        name: '塔罗占卜', endpoint: '/api/tarot',        fields: ['count', 'question'] },
-  { key: 'yijing',       name: '六爻起卦', endpoint: '/api/yijing',       fields: ['method', 'num1', 'num2'] },
+  { key: 'yijing',       name: '六爻起卦', endpoint: '/api/yijing',       fields: ['method', 'year', 'month', 'day', 'hour', 'num1', 'num2'] },
   { key: 'qimen',        name: '奇门择吉', endpoint: '/api/qimen',        fields: ['year', 'month', 'day'] },
   { key: 'fengshui',     name: '风水八宅', endpoint: '/api/fengshui',     fields: ['year', 'gender'] },
   { key: 'relationship', name: '关系合盘', endpoint: '/api/relationship', fields: ['yearA', 'yearB'] },
@@ -42,6 +42,19 @@ function buildBody(sysKey, values) {
   // 关系合盘需要 { a: { year }, b: { year } } 嵌套结构
   if (sysKey === 'relationship') {
     return { a: { year: Number(values.yearA) }, b: { year: Number(values.yearB) } };
+  }
+  // 六爻起卦：时间起卦需年月日时；数字起卦需两个数字（按所选方式构造，忽略另一组）
+  if (sysKey === 'yijing') {
+    if (values.method === 'numbers') {
+      return { method: 'numbers', num1: Number(values.num1), num2: Number(values.num2) };
+    }
+    return {
+      method: 'time',
+      year: Number(values.year),
+      month: Number(values.month),
+      day: Number(values.day),
+      hour: Number(values.hour || 0)
+    };
   }
   const body = {};
   Object.keys(values).forEach((k) => {

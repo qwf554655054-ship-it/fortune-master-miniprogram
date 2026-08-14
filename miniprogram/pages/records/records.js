@@ -5,11 +5,13 @@ Page({
     tab: 'history',   // history | favorites
     history: [],
     favorites: [],
+    member: { tier: 'free' },
     error: ''
   },
 
   onShow() {
     this.loadAll();
+    this.loadMember();
   },
 
   switchTab(e) {
@@ -27,6 +29,12 @@ Page({
     });
   },
 
+  loadMember() {
+    request('/api/membership', 'GET')
+      .then((m) => this.setData({ member: m || { tier: 'free' } }))
+      .catch(() => this.setData({ member: { tier: 'free' } }));
+  },
+
   delHistory(e) {
     const id = e.currentTarget.dataset.id;
     request('/api/user/history/' + id, 'DELETE')
@@ -41,7 +49,19 @@ Page({
       .catch((err) => this.setData({ error: (err && err.message) || '删除失败' }));
   },
 
+  goCalc() {
+    wx.switchTab({ url: '/pages/index/index' });
+  },
+
   goAbout() {
     wx.navigateTo({ url: '/pages/about/about' });
+  },
+
+  goSettings() {
+    wx.navigateTo({ url: '/pages/settings/settings' });
+  },
+
+  goMember() {
+    wx.switchTab({ url: '/pages/member/member' });
   }
 });

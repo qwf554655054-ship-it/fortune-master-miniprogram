@@ -32,5 +32,12 @@
       <view class="sec-content">{{item.content}}</view>
     </view>
     <view class="disclaimer">以上为基于排盘的趣味参考，不构成任何专业建议；人生走向取决于你的选择与行动。</view>
+
+    <view class="actions">
+      <button class="act {{favorited ? 'act-done' : ''}}" size="mini" bindtap="onFavorite">{{favorited ? '已收藏' : '收藏'}}</button>
+      <button class="act act-deep" size="mini" bindtap="onDeep">{{memberTier === 'vip' ? '查看深度解读' : '深度解读·会员'}}</button>
+    </view>
   </view>
+
+  <view class="toast" wx:if="{{toast}}">{{toast}}</view>
 </view>

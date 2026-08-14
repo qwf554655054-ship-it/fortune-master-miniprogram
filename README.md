@@ -53,17 +53,31 @@ miniprogram/
   project.config.json     # 工程配置（appid 当前为 touristappid 占位，发布前需替换为你自己的 AppID）
   app.js / app.json / app.wxss
   utils/api.js            # wx.request 封装，注入 X-Client-Id
-  utils/systems.js        # 13 个体系的字段元数据 + 请求体构造
-  pages/index/            # 测算菜单（13 体系网格）
+  utils/systems.js        # 13 个体系的字段元数据 + 请求体构造（含关系合盘嵌套、六爻按起卦方式构造）
+  pages/index/            # 测算菜单（13 体系网格，可分享）
   pages/calc/             # 输入表单 → 调 /api/{system} 拿命盘 → 调 /api/reading 渲染解读
-  pages/records/          # 历史 / 收藏（调 /api/user/history、/api/user/favorites）
+                          #   · 结果页支持「收藏」与「深度解读（会员）」
+  pages/records/          # 历史 / 收藏（调 /api/user/history、/api/user/favorites），含会员状态与删除
+  pages/member/           # 会员页（状态查询 + 模拟开通，调 /api/membership、/api/membership/upgrade）
+  pages/settings/         # 服务设置（配置后端 apiBase 并持久化，含连通性检测）
+  pages/about/            # 免责声明页
 ```
+
+**功能清单（小程序端）**：
+- 13 个测算体系，数据驱动表单（字段/校验/请求体均由 `utils/systems.js` 描述）。
+- 测算结果自动写入历史；结果页可一键「收藏」。
+- 会员体系闭环：免费用户测算后可引导开通会员，VIP 可查看每体系「深度延展」专属解读。
+- 历史/收藏查看与删除、会员状态展示。
+- 分享给好友（`onShareAppMessage`）。
+- 服务设置页：可视化配置后端地址并做连通性自检（无需改代码）。
 
 **接入步骤**：
 1. 用微信开发者工具「导入项目」，目录选 `miniprogram/`。
 2. 把 `project.config.json` 里的 `appid` 改为你自己的小程序 AppID（或保持 `touristappid` 仅本地预览）。
 3. 启动本仓库后端：`npm install && npm start`（默认 `http://localhost:3000`）。
-4. 在 `miniprogram/app.js` 把 `apiBase` 改为后端可达地址：
+4. 配置后端地址（二选一）：
+   - 改代码：编辑 `miniprogram/app.js` 的 `apiBase`（默认值 `http://localhost:3000`）。
+   - 改配置（推荐）：在小程序「我的 → 服务设置」里填写后端地址并保存，支持连通性自检。
    - 本地预览：填电脑局域网 IP，如 `http://192.168.x.x:3000`，并在开发者工具勾选「不校验合法域名、TLS 版本以及 HTTPS 证书」。
    - 正式发布：必须填 **HTTPS 域名**，并在小程序后台「开发管理 → 服务器域名 → request 合法域名」中加入该域名。
 
