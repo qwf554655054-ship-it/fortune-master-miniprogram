@@ -107,6 +107,15 @@ test/run.js               # 测试（27 项）
 - 上线前需接微信支付（小程序）/ 苹果内购（iOS），并补齐 ICP 备案、增值电信许可证等资质。
 - 完整方案、定价建议、合规红线与上线清单见 `docs/M7-商业化与上线.md`；部署步骤见 `docs/DEPLOY.md`。
 
+## 在线演示（无需后端）
+
+为便于分享，已构建**纯静态版**并部署到云端，所有测算在浏览器本地完成（无需 Node 后端）：
+
+- **演示地址：** https://52450abfdcc2403aadd3756b28f77c57.app.workbuddy.link
+- 构建方式：将 `src/pan/*` 排盘引擎 + `src/ai/interpreter` 规则解读层，用 esbuild 打成浏览器包（`dist/engine.js`），前端加 `dist/shim.js` 拦截 `/api/*` 走本地计算。
+- 重新构建：`node tools/build-demo.js`（产物在 `dist/`，已加入 `.gitignore`）。
+- ⚠️ 演示版为**纯前端规则解读**，未接入 LLM 增强、历史/收藏不持久化、会员为演示态；完整功能（含 LLM、存储、真实会员）请用带后端的 `server.js` 版本（见 `docs/DEPLOY.md`）。
+
 ## 合规说明
 
 本应用仅用于**娱乐与自我觉察**，不涉及医疗、法律、财务专业建议，不提供付费改运服务。

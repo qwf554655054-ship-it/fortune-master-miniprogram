@@ -44,9 +44,9 @@ npm install && npm test && npm start   # http://localhost:3000
 | M7 | 商业化与上线：Freemium 会员模型（深度解读专享）+ Web/小程序会员页 + 部署与上线指南 + 合规红线说明 | ✅ 商业化框架已落地（演示态，待接真实支付/资质） |
 
 ## 版本控制
-- 本地 git：`main` 分支，已提交 MVP / M1+M3 / M2 / **M5 / M4 / M6 / 星盘** 等提交。
-- 远程 GitHub：`https://github.com/qwf554655054-ship-it/fortune-master-miniprogram`
-  - ⚠️ **旧 PAT 已被用户撤销并轮换**，M1+M3 / M2 / M5 / M4 / M6 / 星盘 的全部本地提交**尚未推送至远程**。需用户提供新的 GitHub PAT 后，我会一次性推送全部本地提交。
+- 本地 git：`main` 分支，已提交 MVP / M1+M3 / M2 / M5 / M4 / M6 / 星盘 / M7 等提交。
+- 远程 GitHub：`https://github.com/qwf554655054-ship-it/fortune-master-miniprogram`（**已推送同步**，HEAD `618134f`；本地 `.git/config` 不含凭据，后续建议改 SSH 免 PAT 推送）。
+- **在线演示（纯静态、无后端）：** https://52450abfdcc2403aadd3756b28f77c57.app.workbuddy.link — 用 esbuild 把排盘+解读引擎打包进浏览器，前端 `shim.js` 拦截 `/api/*` 本地计算（构建：`node tools/build-demo.js`）。演示态：规则解读 / 历史收藏不持久化 / 会员演示态；完整功能用带后端的 `server.js`。
 
 ## 合规与上线风险（重要）
 - **微信小程序「算命/占卜/风水」类目审核极严**：该类内容在微信开放平台通常归入受限或需特殊资质的类目（如"宗教/迷信""心理测试"，或要求《增值电信业务经营许可证》/营业执照+说明）。大量算命类小程序会被拒审或下架，务必提前评估。
