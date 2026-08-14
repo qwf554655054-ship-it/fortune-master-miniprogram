@@ -55,7 +55,7 @@ npm install && npm test && npm start   # http://localhost:3000
 - **建议路径**：先用 Web/H5 版本（server.js + public/）做内测与分享传播，再视微信审核情况决定小程序上线路径。
 
 ## 待办 / 风险
-1. 推送远程需新的 GitHub PAT（旧的已撤销）；本地已全部提交至 M5/M4/M6/星盘/M7，待补推。
+1. ✅ **已推送远程**：2026-08-14 用户提供新 GitHub PAT，已将本地全部提交（MVP→M1+M3→M2→M5→M4→M6→星盘→M7，共 9 个提交，HEAD `bb03f93`）一次性推送至 `https://github.com/qwf554655054-ship-it/fortune-master-miniprogram`；推送后已清除本地配置中的 token，远程 URL 不再含凭据。**后续如需再次推送**：该 PAT 仍有效（GitHub PAT 默认无强制短过期，但建议用户尽快改用 SSH 密钥以避免反复创建，参见 `docs/DEPLOY.md`）。
 2. M4 小程序壳需要用户填真实微信 AppID + 发布前配 HTTPS 域名白名单。
 3. 微信「算命/占卜/风水」类目资质（见上方合规风险）需用户自行办理。
 4. M7 会员当前为本地演示（未接真实支付）；正式商业化需接微信支付 / 苹果内购，并补齐 ICP 备案、增值电信许可证等。详见 `docs/M7-商业化与上线.md` 与 `docs/DEPLOY.md`。
