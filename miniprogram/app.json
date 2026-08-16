@@ -1,10 +1,12 @@
 {
   "pages": [
     "pages/index/index",
-    "pages/calc/calc",
+    "pages/fortune/fortune",
     "pages/records/records",
-    "pages/about/about",
+    "pages/profile/profile",
+    "pages/calc/calc",
     "pages/member/member",
+    "pages/about/about",
     "pages/settings/settings"
   ],
   "window": {
@@ -14,6 +16,7 @@
     "backgroundColor": "#2b2118"
   },
   "tabBar": {
+    "custom": true,
     "color": "#b9a98f",
     "selectedColor": "#e8c477",
     "backgroundColor": "#1c1611",
@@ -23,12 +26,16 @@
         "text": "测算"
       },
       {
-        "pagePath": "pages/records/records",
-        "text": "我的"
+        "pagePath": "pages/fortune/fortune",
+        "text": "运势"
       },
       {
-        "pagePath": "pages/member/member",
-        "text": "会员"
+        "pagePath": "pages/records/records",
+        "text": "记录"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的"
       }
     ]
   },

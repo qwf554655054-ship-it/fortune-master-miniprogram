@@ -1,0 +1,40 @@
+<view class="page tab-page">
+  <view class="hero-sm">今日运势</view>
+  <view class="sub">{{date}} · 每日一签与生肖星座运</view>
+
+  <!-- 每日一签 -->
+  <view class="card draw">
+    <view class="card-tag">每日一签</view>
+    <view class="draw-title">{{draw.title}}</view>
+    <view class="draw-text">{{draw.text}}</view>
+    <view class="draw-meta">第 {{draw.no}} 签 · 今日专属</view>
+  </view>
+
+  <!-- 生肖月运 -->
+  <view class="card">
+    <picker mode="selector" range="{{zodiacs}}" value="{{zodiacIndex}}" bindchange="onZodiac">
+      <view class="card-tag">生肖月运 · {{zodiac}} {{zodiacIndex >= 0 ? '▾' : ''}}</view>
+    </picker>
+    <view class="bars">
+      <view class="bar"><text>事业</text><view class="track"><view class="fill" style="width:{{zLuck.career}}%"></view></view><text>{{zLuck.career}}</text></view>
+      <view class="bar"><text>财运</text><view class="track"><view class="fill" style="width:{{zLuck.wealth}}%"></view></view><text>{{zLuck.wealth}}</text></view>
+      <view class="bar"><text>感情</text><view class="track"><view class="fill" style="width:{{zLuck.love}}%"></view></view><text>{{zLuck.love}}</text></view>
+    </view>
+    <view class="luck-text">{{zLuck.text}}</view>
+  </view>
+
+  <!-- 星座运 -->
+  <view class="card">
+    <picker mode="selector" range="{{signs}}" value="{{signIndex}}" bindchange="onSign">
+      <view class="card-tag">星座运 · {{sign}}座 {{signIndex >= 0 ? '▾' : ''}}</view>
+    </picker>
+    <view class="bars">
+      <view class="bar"><text>事业</text><view class="track"><view class="fill" style="width:{{sLuck.career}}%"></view></view><text>{{sLuck.career}}</text></view>
+      <view class="bar"><text>财运</text><view class="track"><view class="fill" style="width:{{sLuck.wealth}}%"></view></view><text>{{sLuck.wealth}}</text></view>
+      <view class="bar"><text>感情</text><view class="track"><view class="fill" style="width:{{sLuck.love}}%"></view></view><text>{{sLuck.love}}</text></view>
+    </view>
+    <view class="luck-text">{{sLuck.text}}</view>
+  </view>
+
+  <view class="disclaimer">运势内容由日期算法生成，仅供娱乐参考。</view>
+</view>

@@ -1,0 +1,60 @@
+.user {
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg, #3a2c1c, #241a10);
+  border: 1rpx solid #c79a45;
+}
+
+.avatar {
+  width: 96rpx;
+  height: 96rpx;
+  line-height: 96rpx;
+  text-align: center;
+  border-radius: 50%;
+  background: linear-gradient(160deg, #e8c477, #c79a45);
+  color: #2b2118;
+  font-size: 40rpx;
+  font-weight: 800;
+  margin-right: 26rpx;
+}
+
+.uname {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #ece3d4;
+}
+
+.utier {
+  font-size: 24rpx;
+  color: #c79a45;
+  margin-top: 8rpx;
+}
+
+.vip-entry {
+  border: 1rpx solid #c79a45 !important;
+  background: linear-gradient(160deg, #2b2118, #1f1810);
+  color: #e8c477 !important;
+  font-weight: 700;
+}
+
+.group {
+  margin-top: 22rpx;
+}
+
+.entry {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(160deg, #2b2118, #211913);
+  border: 1rpx solid #3a2c1c;
+  border-radius: 16rpx;
+  padding: 30rpx 28rpx;
+  margin-bottom: 16rpx;
+  color: #ece3d4;
+  font-size: 29rpx;
+}
+
+.arrow {
+  color: #c79a45;
+  font-size: 38rpx;
+}

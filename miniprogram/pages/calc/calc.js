@@ -109,7 +109,7 @@ Page({
       // 非会员：提示并引导到会员中心
       this.setData({ toast: '开通会员可解锁「深度延展」专属解读' });
       setTimeout(() => {
-        wx.switchTab({ url: '/pages/member/member' });
+        wx.navigateTo({ url: '/pages/member/member' });
       }, 800);
     }
   },
@@ -132,7 +132,7 @@ Page({
         // 兜底：若会员状态与服务端不一致返回 403，引导开通
         if ((err && err.message && err.message.indexOf('会员') >= 0) || (err && /403/.test(err.message))) {
           this.setData({ toast: '开通会员可解锁「深度延展」专属解读', loading: false });
-          setTimeout(() => wx.switchTab({ url: '/pages/member/member' }), 800);
+          setTimeout(() => wx.navigateTo({ url: '/pages/member/member' }), 800);
         } else {
           this.setData({ error: (err && err.message) || '深度解读失败', loading: false });
         }

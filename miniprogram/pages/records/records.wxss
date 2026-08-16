@@ -92,6 +92,17 @@
   font-size: 26rpx;
 }
 
+.error {
+  margin: 16rpx 0;
+  padding: 18rpx 22rpx;
+  background: rgba(201, 123, 107, 0.12);
+  border: 1rpx solid #7a4a3f;
+  border-radius: 14rpx;
+  color: #e09a8a;
+  font-size: 25rpx;
+  text-align: center;
+}
+
 .entries {
   margin-top: 44rpx;
   border-top: 1rpx solid #4a3a26;

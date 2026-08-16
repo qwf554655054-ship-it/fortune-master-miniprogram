@@ -1,12 +1,46 @@
-<view class="page">
-  <view class="hero">命理测算 · 趣味参考</view>
+<view class="page tab-page">
+  <view class="hero-sm">命理测算</view>
+  <view class="sub">选择你的方式，开启今日探索</view>
 
+  <!-- 大 CTA：P0 八字排盘 -->
+  <view class="cta-card" bindtap="goSystem" data-key="bazi">
+    <view class="cta-badge">热门</view>
+    <view class="cta-title">八字排盘</view>
+    <view class="cta-desc">输入出生时间，生成专属命盘与 AI 解读</view>
+    <view class="cta-btn">开始八字排盘 ›</view>
+  </view>
+
+  <!-- 次 CTA：紫微斗数 -->
+  <view class="cta-card cta-card-2" bindtap="goSystem" data-key="ziwei">
+    <view class="cta-main2">
+      <view class="cta-title2">紫微斗数</view>
+      <view class="cta-desc2">星曜布局，看清命格与运势走向</view>
+    </view>
+    <view class="cta-btn2">去排盘 ›</view>
+  </view>
+
+  <!-- 全部体系 -->
+  <view class="sec-title">全部体系</view>
   <view class="grid">
-    <view class="cell" wx:for="{{systems}}" wx:key="key"
-          data-key="{{item.key}}" bindtap="goCalc" hover-class="cell-hover">
+    <view class="cell" wx:for="{{others}}" wx:key="key"
+          data-key="{{item.key}}" bindtap="goSystem" hover-class="cell-hover">
       <view class="cell-name">{{item.name}}</view>
     </view>
   </view>
 
-  <view class="tip">本应用仅用于娱乐与自我觉察，不涉及医疗、法律、财务等专业建议，亦不提供付费改运服务。未成年人请在家长指导下使用。</view>
+  <!-- 最近测算 -->
+  <view class="sec-title">最近测算</view>
+  <block wx:if="{{recent.length}}">
+    <view class="rec" wx:for="{{recent}}" wx:key="id"
+          data-key="{{item.system}}" bindtap="goSystem" hover-class="rec-hover">
+      <view class="rec-main">
+        <view class="rec-title">{{item.title}}</view>
+        <view class="rec-time">{{item.createdAt}}</view>
+      </view>
+      <view class="rec-arrow">›</view>
+    </view>
+  </block>
+  <view class="rec-empty" wx:else bindtap="goSystem" data-key="bazi">还没有记录，去测算一卦吧 ›</view>
+
+  <view class="disclaimer">本应用仅用于娱乐与自我觉察，不涉及医疗、法律、财务等专业建议。未成年人请在家长指导下使用。</view>
 </view>

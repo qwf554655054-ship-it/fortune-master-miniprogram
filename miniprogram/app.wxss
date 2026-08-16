@@ -11,6 +11,11 @@ page {
   box-sizing: border-box;
 }
 
+/* tab 页底部留出自定义 tabBar 空间（含安全区） */
+.tab-page {
+  padding-bottom: 170rpx;
+}
+
 .hero {
   font-size: 40rpx;
   font-weight: 700;
@@ -18,6 +23,20 @@ page {
   text-align: center;
   margin: 24rpx 0 36rpx;
   letter-spacing: 4rpx;
+}
+
+/* 各 tab 页统一的小标题与副标题 */
+.hero-sm {
+  font-size: 44rpx;
+  font-weight: 700;
+  color: #e8c477;
+  letter-spacing: 3rpx;
+}
+
+.sub {
+  font-size: 24rpx;
+  color: #9c8c74;
+  margin: 10rpx 0 30rpx;
 }
 
 .tip, .disclaimer {
@@ -33,4 +52,25 @@ page {
   font-weight: 700;
   color: #e8c477;
   margin-bottom: 28rpx;
+}
+
+/* 区块标题（金线竖条） */
+.sec-title {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #e8c477;
+  margin: 40rpx 0 22rpx;
+  padding-left: 16rpx;
+  border-left: 6rpx solid #c79a45;
+  line-height: 1.1;
+}
+
+/* 通用卡片 */
+.card {
+  background: linear-gradient(160deg, #2b2118, #211913);
+  border: 1rpx solid #3a2c1c;
+  border-radius: 22rpx;
+  padding: 30rpx 28rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 6rpx 18rpx rgba(0, 0, 0, 0.25);
 }

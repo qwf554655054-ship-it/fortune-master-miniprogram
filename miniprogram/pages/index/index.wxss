@@ -1,3 +1,86 @@
+/* 大 CTA 卡 */
+.cta-card {
+  position: relative;
+  background: linear-gradient(135deg, #3a2c1c, #241a10);
+  border: 1rpx solid #c79a45;
+  border-radius: 26rpx;
+  padding: 40rpx 34rpx;
+  margin-bottom: 22rpx;
+  box-shadow: 0 8rpx 26rpx rgba(199, 154, 69, 0.18);
+}
+
+.cta-badge {
+  position: absolute;
+  top: 26rpx;
+  right: 28rpx;
+  font-size: 20rpx;
+  color: #2b2118;
+  background: linear-gradient(160deg, #e8c477, #c79a45);
+  padding: 4rpx 16rpx;
+  border-radius: 20rpx;
+  font-weight: 700;
+}
+
+.cta-title {
+  font-size: 44rpx;
+  font-weight: 800;
+  color: #e8c477;
+  letter-spacing: 2rpx;
+}
+
+.cta-desc {
+  font-size: 25rpx;
+  color: #cbb893;
+  margin: 14rpx 0 26rpx;
+  line-height: 1.6;
+}
+
+.cta-btn {
+  display: inline-block;
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #2b2118;
+  background: linear-gradient(160deg, #e8c477, #c79a45);
+  padding: 16rpx 40rpx;
+  border-radius: 40rpx;
+  box-shadow: 0 4rpx 14rpx rgba(199, 154, 69, 0.35);
+}
+
+/* 次 CTA */
+.cta-card-2 {
+  border-color: #4a3a26;
+  box-shadow: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30rpx 30rpx;
+}
+
+.cta-main2 {
+  flex: 1;
+}
+
+.cta-title2 {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #ece3d4;
+}
+
+.cta-desc2 {
+  font-size: 23rpx;
+  color: #9c8c74;
+  margin-top: 8rpx;
+}
+
+.cta-btn2 {
+  font-size: 26rpx;
+  color: #e8c477;
+  font-weight: 700;
+  white-space: nowrap;
+  margin-left: 20rpx;
+}
+
+/* 体系宫格 */
 .grid {
   display: flex;
   flex-wrap: wrap;
@@ -7,7 +90,7 @@
 .cell {
   width: 31%;
   margin-bottom: 22rpx;
-  padding: 36rpx 0;
+  padding: 34rpx 0;
   background: linear-gradient(160deg, #3a2c1c, #2a2014);
   border: 1rpx solid #4a3a26;
   border-radius: 18rpx;
@@ -21,6 +104,52 @@
 
 .cell-name {
   color: #ece3d4;
-  font-size: 28rpx;
+  font-size: 27rpx;
   font-weight: 600;
+}
+
+/* 最近测算 */
+.rec {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(160deg, #2b2118, #211913);
+  border: 1rpx solid #3a2c1c;
+  border-radius: 18rpx;
+  padding: 26rpx 28rpx;
+  margin-bottom: 18rpx;
+}
+
+.rec-hover {
+  transform: scale(0.99);
+  background: #34281a;
+}
+
+.rec-main {
+  flex: 1;
+}
+
+.rec-title {
+  font-size: 28rpx;
+  color: #ece3d4;
+  font-weight: 600;
+}
+
+.rec-time {
+  font-size: 22rpx;
+  color: #9c8c74;
+  margin-top: 8rpx;
+}
+
+.rec-arrow {
+  font-size: 40rpx;
+  color: #c79a45;
+  margin-left: 16rpx;
+}
+
+.rec-empty {
+  text-align: center;
+  color: #c79a45;
+  font-size: 26rpx;
+  padding: 30rpx 0;
 }

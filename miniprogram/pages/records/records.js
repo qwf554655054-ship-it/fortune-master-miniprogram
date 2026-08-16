@@ -5,13 +5,23 @@ Page({
     tab: 'history',   // history | favorites
     history: [],
     favorites: [],
-    member: { tier: 'free' },
     error: ''
   },
 
+  onLoad() {
+    // 支持从「我的」跳转时指定初始 tab（switchTab 不支持参数，经 globalData 传递）
+    const app = getApp();
+    if (app && app.globalData && app.globalData.recordsTab) {
+      this.setData({ tab: app.globalData.recordsTab });
+      app.globalData.recordsTab = '';
+    }
+  },
+
   onShow() {
+    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
+      this.getTabBar().setData({ selected: 2 });
+    }
     this.loadAll();
-    this.loadMember();
   },
 
   switchTab(e) {
@@ -27,12 +37,6 @@ Page({
     }).catch((err) => {
       this.setData({ error: (err && err.message) || '加载失败' });
     });
-  },
-
-  loadMember() {
-    request('/api/membership', 'GET')
-      .then((m) => this.setData({ member: m || { tier: 'free' } }))
-      .catch(() => this.setData({ member: { tier: 'free' } }));
   },
 
   delHistory(e) {
@@ -51,17 +55,5 @@ Page({
 
   goCalc() {
     wx.switchTab({ url: '/pages/index/index' });
-  },
-
-  goAbout() {
-    wx.navigateTo({ url: '/pages/about/about' });
-  },
-
-  goSettings() {
-    wx.navigateTo({ url: '/pages/settings/settings' });
-  },
-
-  goMember() {
-    wx.switchTab({ url: '/pages/member/member' });
   }
 });

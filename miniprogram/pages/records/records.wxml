@@ -1,15 +1,12 @@
-<view class="page">
+<view class="page tab-page">
+  <view class="hero-sm">记录</view>
+
   <view class="tabs">
     <view class="tab {{tab === 'history' ? 'active' : ''}}" data-tab="history" bindtap="switchTab">历史记录</view>
     <view class="tab {{tab === 'favorites' ? 'active' : ''}}" data-tab="favorites" bindtap="switchTab">我的收藏</view>
   </view>
 
   <view class="error" wx:if="{{error}}">{{error}}</view>
-
-  <view class="member-bar" bindtap="goMember">
-    <text>会员状态：{{member.tier === 'vip' ? '💎 VIP' : '🆓 免费'}}</text>
-    <text class="arrow">›</text>
-  </view>
 
   <block wx:if="{{tab === 'history'}}">
     <view class="empty" wx:if="{{history.length === 0}}">
@@ -41,8 +38,5 @@
     </view>
   </block>
 
-  <view class="entries">
-    <view class="entry" bindtap="goSettings">服务设置（后端地址）</view>
-    <view class="entry" bindtap="goAbout">查看免责声明</view>
-  </view>
+  <view class="disclaimer">记录仅保存在本设备，可在「我的」中管理。</view>
 </view>

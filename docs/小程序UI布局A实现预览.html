@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>命理测算小程序 · 方案A 实现预览</title>
+<style>
+  :root{
+    --bg:#221a12; --bar:#1c1611; --card1:#2b2118; --card2:#211913;
+    --gold:#e8c477; --gold2:#c79a45; --txt:#ece3d4; --sub:#9c8c74;
+    --line:#3a2c1c;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:#15110c;color:var(--txt);font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;padding:32px 16px 60px;}
+  h1{text-align:center;color:var(--gold);font-size:24px;margin-bottom:6px;letter-spacing:2px;}
+  .desc{text-align:center;color:var(--sub);font-size:13px;margin-bottom:34px;}
+  .row{display:flex;gap:22px;flex-wrap:wrap;justify-content:center;}
+  .phone{width:280px;background:var(--bg);border:1px solid var(--line);border-radius:30px;padding:16px 14px 12px;box-shadow:0 14px 40px rgba(0,0,0,.5);}
+  .phone .scr{height:560px;overflow:hidden;border-radius:18px;padding:14px 12px;position:relative;}
+  .tag{text-align:center;color:var(--gold);font-size:13px;font-weight:700;margin-bottom:8px;letter-spacing:1px;}
+  .hero{font-size:22px;font-weight:800;color:var(--gold);letter-spacing:1px;}
+  .sub{font-size:12px;color:var(--sub);margin:4px 0 14px;}
+  .sec{font-size:14px;font-weight:700;color:var(--gold);margin:18px 0 10px;padding-left:8px;border-left:3px solid var(--gold2);}
+  .card{background:linear-gradient(160deg,var(--card1),var(--card2));border:1px solid var(--line);border-radius:14px;padding:14px 14px;margin-bottom:12px;}
+  .card.gold{border-color:var(--gold2);box-shadow:0 4px 14px rgba(199,154,69,.18);position:relative;}
+  .badge{position:absolute;top:12px;right:12px;font-size:10px;color:#2b2118;background:linear-gradient(160deg,var(--gold),var(--gold2));padding:2px 9px;border-radius:10px;font-weight:700;}
+  .ct{font-size:20px;font-weight:800;color:var(--gold);}
+  .cd{font-size:12px;color:#cbb893;margin:6px 0 10px;line-height:1.5;}
+  .btn{display:inline-block;font-size:12px;font-weight:700;color:#2b2118;background:linear-gradient(160deg,var(--gold),var(--gold2));padding:7px 16px;border-radius:18px;}
+  .ct2{font-size:16px;font-weight:700;color:var(--txt);}
+  .ct2d{font-size:11px;color:var(--sub);margin-top:4px;}
+  .ct2b{font-size:12px;color:var(--gold);font-weight:700;white-space:nowrap;margin-left:12px;}
+  .grid{display:flex;flex-wrap:wrap;justify-content:space-between;}
+  .cell{width:31%;padding:14px 0;text-align:center;background:linear-gradient(160deg,#3a2c1c,#2a2014);border:1px solid #4a3a26;border-radius:10px;font-size:12px;color:var(--txt);margin-bottom:9px;}
+  .rec{display:flex;align-items:center;justify-content:space-between;background:linear-gradient(160deg,var(--card1),var(--card2));border:1px solid var(--line);border-radius:10px;padding:12px 13px;margin-bottom:9px;}
+  .rt{font-size:13px;font-weight:600;color:var(--txt);}
+  .rtime{font-size:11px;color:var(--sub);margin-top:4px;}
+  .rarrow{color:var(--gold2);font-size:20px;}
+  .disc{font-size:11px;color:var(--sub);text-align:center;margin-top:18px;line-height:1.6;}
+  .tabs{display:flex;border-bottom:1px solid #4a3a26;margin-bottom:14px;}
+  .tab{flex:1;text-align:center;padding:10px 0;font-size:13px;color:var(--sub);}
+  .tab.on{color:var(--gold);font-weight:700;border-bottom:2px solid var(--gold);}
+  .item{background:#2a2014;border:1px solid #4a3a26;border-radius:9px;padding:11px;margin-bottom:9px;}
+  .it{display:flex;justify-content:space-between;font-size:13px;font-weight:600;color:var(--txt);}
+  .idel{color:#c97b6b;font-size:11px;}
+  .is{font-size:11px;color:#c9b89a;margin-top:5px;line-height:1.5;}
+  .itime{font-size:10px;color:#7d6e58;margin-top:4px;}
+  .user{display:flex;align-items:center;background:linear-gradient(135deg,#3a2c1c,#241a10);border:1px solid var(--gold2);border-radius:14px;padding:14px;}
+  .av{width:48px;height:48px;line-height:48px;text-align:center;border-radius:50%;background:linear-gradient(160deg,var(--gold),var(--gold2));color:#2b2118;font-weight:800;font-size:20px;margin-right:14px;}
+  .un{font-size:16px;font-weight:700;color:var(--txt);}
+  .ut{font-size:12px;color:var(--gold2);margin-top:4px;}
+  .ent{display:flex;justify-content:space-between;align-items:center;background:linear-gradient(160deg,var(--card1),var(--card2));border:1px solid var(--line);border-radius:9px;padding:14px;margin-bottom:9px;font-size:14px;color:var(--txt);}
+  .ent.vip{border-color:var(--gold2);color:var(--gold);font-weight:700;}
+  .arr{color:var(--gold2);font-size:20px;}
+  .grp{margin-top:11px;}
+  .bar{display:flex;align-items:center;font-size:11px;color:#cbb893;margin:7px 0;}
+  .bar>span:first-child{width:36px;}
+  .bar>span:last-child{width:26px;text-align:right;color:var(--gold);}
+  .track{flex:1;height:7px;background:#1a140d;border-radius:5px;margin:0 8px;overflow:hidden;}
+  .fill{height:100%;background:linear-gradient(90deg,var(--gold2),var(--gold));border-radius:5px;}
+  .tabbar{position:absolute;left:0;right:0;bottom:0;height:54px;display:flex;background:#17120c;border-top:1px solid var(--line);}
+  .tb{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--sub);font-size:10px;}
+  .tb.on{color:var(--gold);}
+  .dot{width:26px;height:26px;line-height:26px;text-align:center;border-radius:50%;background:#2a2014;border:1px solid #4a3a26;font-size:13px;margin-bottom:3px;}
+  .tb.on .dot{background:linear-gradient(160deg,var(--gold),var(--gold2));color:#2b2118;font-weight:700;border-color:var(--gold);}
+  .note{text-align:center;color:var(--sub);font-size:12px;margin-top:30px;line-height:1.7;}
+</style>
+</head>
+<body>
+  <h1>命理测算小程序 · 方案 A 实现预览</h1>
+  <div class="desc">底部四 Tab（测算 / 运势 / 记录 / 我的）＋ 首页聚合卡片流 · 暗色玄学风（深棕底 + 金色激活）</div>
+
+  <div class="row">
+    <!-- 测算 -->
+    <div class="phone">
+      <div class="scr">
+        <div class="tag">测算</div>
+        <div class="hero">命理测算</div>
+        <div class="sub">选择你的方式，开启今日探索</div>
+
+        <div class="card gold">
+          <div class="badge">热门</div>
+          <div class="ct">八字排盘</div>
+          <div class="cd">输入出生时间，生成专属命盘与 AI 解读</div>
+          <div class="btn">开始八字排盘 ›</div>
+        </div>
+
+        <div class="card" style="display:flex;justify-content:space-between;align-items:center;padding:13px;">
+          <div><div class="ct2">紫微斗数</div><div class="ct2d">星曜布局，看清命格与运势走向</div></div>
+          <div class="ct2b">去排盘 ›</div>
+        </div>
+
+        <div class="sec">全部体系</div>
+        <div class="grid">
+          <div class="cell">生肖运势</div><div class="cell">每日运势</div><div class="cell">数字命理</div>
+          <div class="cell">塔罗占卜</div><div class="cell">六爻起卦</div><div class="cell">奇门择吉</div>
+          <div class="cell">风水八宅</div><div class="cell">关系合盘</div><div class="cell">星盘占星</div>
+          <div class="cell">年运</div><div class="cell">月运</div>
+        </div>
+
+        <div class="sec">最近测算</div>
+        <div class="rec"><div><div class="rt">八字排盘</div><div class="rtime">2026-08-16 01:06</div></div><div class="rarrow">›</div></div>
+        <div class="rec"><div><div class="rt">紫微斗数</div><div class="rtime">2026-08-15 22:30</div></div><div class="rarrow">›</div></div>
+
+        <div class="disc">本应用仅用于娱乐与自我觉察，不涉及医疗、法律、财务等专业建议。</div>
+      </div>
+      <div class="tabbar"><div class="tb on"><div class="dot">测</div>测算</div><div class="tb"><div class="dot">运</div>运势</div><div class="tb"><div class="dot">录</div>记录</div><div class="tb"><div class="dot">我</div>我的</div></div>
+    </div>
+
+    <!-- 运势 -->
+    <div class="phone">
+      <div class="scr">
+        <div class="tag">运势</div>
+        <div class="hero">今日运势</div>
+        <div class="sub">2026-08-16 · 每日一签与生肖星座运</div>
+
+        <div class="card">
+          <div class="sec" style="margin:0 0 8px;">每日一签</div>
+          <div class="ct" style="text-align:center;">上上签</div>
+          <div class="cd" style="text-align:center;">云开见月明，谋事多顺遂。今日宜主动出击，贵人已在途中。</div>
+          <div class="sub" style="text-align:center;margin:0;">第 8 签 · 今日专属</div>
+        </div>
+
+        <div class="card">
+          <div class="sec" style="margin:0 0 10px;">生肖月运 · 鼠 ▾</div>
+          <div class="bar"><span>事业</span><div class="track"><div class="fill" style="width:78%"></div></div><span>78</span></div>
+          <div class="bar"><span>财运</span><div class="track"><div class="fill" style="width:65%"></div></div><span>65</span></div>
+          <div class="bar"><span>感情</span><div class="track"><div class="fill" style="width:84%"></div></div><span>84</span></div>
+          <div class="cd" style="margin:6px 0 0;">整体平顺，事业有贵人照拂，财运稳中有升，感情宜多沟通。</div>
+        </div>
+
+        <div class="card">
+          <div class="sec" style="margin:0 0 10px;">星座运 · 白羊座 ▾</div>
+          <div class="bar"><span>事业</span><div class="track"><div class="fill" style="width:71%"></div></div><span>71</span></div>
+          <div class="bar"><span>财运</span><div class="track"><div class="fill" style="width:60%"></div></div><span>60</span></div>
+          <div class="bar"><span>感情</span><span style="width:26px"></span><div class="track"><div class="fill" style="width:88%"></div></div><span>88</span></div>
+          <div class="cd" style="margin:6px 0 0;">人际运佳，易得他人助力；财务上宜守不宜冒进。</div>
+        </div>
+
+        <div class="disc">运势内容由日期算法生成，仅供娱乐参考。</div>
+      </div>
+      <div class="tabbar"><div class="tb"><div class="dot">测</div>测算</div><div class="tb on"><div class="dot">运</div>运势</div><div class="tb"><div class="dot">录</div>记录</div><div class="tb"><div class="dot">我</div>我的</div></div>
+    </div>
+
+    <!-- 记录 -->
+    <div class="phone">
+      <div class="scr">
+        <div class="tag">记录</div>
+        <div class="hero">记录</div>
+        <div class="tabs"><div class="tab on">历史记录</div><div class="tab">我的收藏</div></div>
+
+        <div class="item">
+          <div class="it"><span>八字排盘</span><span class="idel">删除</span></div>
+          <div class="is">日主偏弱，喜印比；今年偏财透干，宜稳健理财。</div>
+          <div class="itime">2026-08-16 01:06</div>
+        </div>
+        <div class="item">
+          <div class="it"><span>紫微斗数</span><span class="idel">删除</span></div>
+          <div class="is">命宫天同，性格温和；迁移宫化禄，利远行。 </div>
+          <div class="itime">2026-08-15 22:30</div>
+        </div>
+        <div class="item">
+          <div class="it"><span>塔罗占卜</span><span class="idel">删除</span></div>
+          <div class="is">过去·隐士 现在·星星 未来·太阳，前景明朗。</div>
+          <div class="itime">2026-08-14 20:11</div>
+        </div>
+
+        <div class="disc">记录仅保存在本设备，可在「我的」中管理。</div>
+      </div>
+      <div class="tabbar"><div class="tb"><div class="dot">测</div>测算</div><div class="tb"><div class="dot">运</div>运势</div><div class="tb on"><div class="dot">录</div>记录</div><div class="tb"><div class="dot">我</div>我的</div></div>
+    </div>
+
+    <!-- 我的 -->
+    <div class="phone">
+      <div class="scr">
+        <div class="tag">我的</div>
+        <div class="hero">我的</div>
+
+        <div class="user" style="margin-top:14px;">
+          <div class="av">命</div>
+          <div><div class="un">命理爱好者</div><div class="ut">免费用户</div></div>
+        </div>
+
+        <div class="ent vip" style="margin-top:14px;"><span>会员中心</span><span class="arr">›</span></div>
+
+        <div class="grp">
+          <div class="ent"><span>历史记录</span><span class="arr">›</span></div>
+          <div class="ent"><span>我的收藏</span><span class="arr">›</span></div>
+        </div>
+        <div class="grp">
+          <div class="ent"><span>服务设置</span><span class="arr">›</span></div>
+          <div class="ent"><span>免责声明</span><span class="arr">›</span></div>
+        </div>
+
+        <div class="disc">命理测算 · 趣味参考，仅供娱乐</div>
+      </div>
+      <div class="tabbar"><div class="tb"><div class="dot">测</div>测算</div><div class="tb"><div class="dot">运</div>运势</div><div class="tb"><div class="dot">录</div>记录</div><div class="tb on"><div class="dot">我</div>我的</div></div>
+    </div>
+  </div>
+
+  <div class="note">
+    说明：本预览与代码实现一致（同色值、同结构）。可直接用微信开发者工具打开 <code>miniprogram/</code> 目录运行。<br/>
+    相比原 3 Tab（测算/我的/会员）：会员降级为「我的」内二级入口，新增「运势」作为日活留存钩子，首页改为聚合卡片流（大 CTA + 体系宫格 + 最近测算）。
+  </div>
+</body>
+</html>
