@@ -61,14 +61,14 @@
   .tabbar{position:absolute;left:0;right:0;bottom:0;height:54px;display:flex;background:#17120c;border-top:1px solid var(--line);}
   .tb{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--sub);font-size:10px;}
   .tb.on{color:var(--gold);}
-  .dot{width:26px;height:26px;line-height:26px;text-align:center;border-radius:50%;background:#2a2014;border:1px solid #4a3a26;font-size:13px;margin-bottom:3px;}
-  .tb.on .dot{background:linear-gradient(160deg,var(--gold),var(--gold2));color:#2b2118;font-weight:700;border-color:var(--gold);}
+  .dot{width:26px;height:26px;display:flex;align-items:center;justify-content:center;margin-bottom:3px;}
+  .tb.on .dot svg{filter:drop-shadow(0 0 6px rgba(232,196,119,.5));}
   .note{text-align:center;color:var(--sub);font-size:12px;margin-top:30px;line-height:1.7;}
 </style>
 </head>
 <body>
   <h1>命理测算小程序 · 方案 A 实现预览</h1>
-  <div class="desc">底部四 Tab（测算 / 运势 / 记录 / 我的）＋ 首页聚合卡片流 · 暗色玄学风（深棕底 + 金色激活）</div>
+  <div class="desc">底部四 Tab（测算 / 运势 / 记录 / 我的）＋ 首页聚合卡片流 · 暗色玄学风（深棕底 + 金色激活）· 金线图标</div>
 
   <div class="row">
     <!-- 测算 -->
@@ -104,7 +104,7 @@
 
         <div class="disc">本应用仅用于娱乐与自我觉察，不涉及医疗、法律、财务等专业建议。</div>
       </div>
-      <div class="tabbar"><div class="tb on"><div class="dot">测</div>测算</div><div class="tb"><div class="dot">运</div>运势</div><div class="tb"><div class="dot">录</div>记录</div><div class="tb"><div class="dot">我</div>我的</div></div>
+      <div class="tabbar"><div class="tb on"><div class="dot"><svg width="26" height="26" viewBox="0 0 48 48" fill="none" stroke="#e8c477" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="24" r="15"/><rect x="19.5" y="19.5" width="9" height="9" rx="1.4"/></svg></div>测算</div><div class="tb"><div class="dot"><svg width="26" height="26" viewBox="0 0 48 48" fill="none" stroke="#8a7a63" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M24 7 L27.4 20.6 L41 24 L27.4 27.4 L24 41 L20.6 27.4 L7 24 L20.6 20.6 Z"/></svg></div>运势</div><div class="tb"><div class="dot"><svg width="26" height="26" viewBox="0 0 48 48" fill="none" stroke="#8a7a63" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="13" y="9" width="22" height="30" rx="3"/><line x1="18" y1="17" x2="30" y2="17"/><line x1="18" y1="23" x2="30" y2="23"/><line x1="18" y1="29" x2="26" y2="29"/></svg></div>记录</div><div class="tb"><div class="dot"><svg width="26" height="26" viewBox="0 0 48 48" fill="none" stroke="#8a7a63" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="18" r="6.5"/><path d="M13 39 C13 31 35 31 35 39"/></svg></div>我的</div></div>
     </div>
 
     <!-- 运势 -->
@@ -139,7 +139,7 @@
 
         <div class="disc">运势内容由日期算法生成，仅供娱乐参考。</div>
       </div>
-      <div class="tabbar"><div class="tb"><div class="dot">测</div>测算</div><div class="tb on"><div class="dot">运</div>运势</div><div class="tb"><div class="dot">录</div>记录</div><div class="tb"><div class="dot">我</div>我的</div></div>
+      <div class="tabbar"><div class="tb"><div class="dot"><svg width="26" height="26" viewBox="0 0 48 48" fill="none" stroke="#8a7a63" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="24" r="15"/><rect x="19.5" y="19.5" width="9" height="9" rx="1.4"/></svg></div>测算</div><div class="tb on"><div class="dot"><svg width="26" height="26" viewBox="0 0 48 48" fill="none" stroke="#e8c477" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M24 7 L27.4 20.6 L41 24 L27.4 27.4 L24 41 L20.6 27.4 L7 24 L20.6 20.6 Z"/></svg></div>运势</div><div class="tb"><div class="dot"><svg width="26" height="26" viewBox="0 0 48 48" fill="none" stroke="#8a7a63" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="13" y="9" width="22" height="30" rx="3"/><line x1="18" y1="17" x2="30" y2="17"/><line x1="18" y1="23" x2="30" y2="23"/><line x1="18" y1="29" x2="26" y2="29"/></svg></div>记录</div><div class="tb"><div class="dot"><svg width="26" height="26" viewBox="0 0 48 48" fill="none" stroke="#8a7a63" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="18" r="6.5"/><path d="M13 39 C13 31 35 31 35 39"/></svg></div>我的</div></div>
     </div>
 
     <!-- 记录 -->
@@ -167,7 +167,7 @@
 
         <div class="disc">记录仅保存在本设备，可在「我的」中管理。</div>
       </div>
-      <div class="tabbar"><div class="tb"><div class="dot">测</div>测算</div><div class="tb"><div class="dot">运</div>运势</div><div class="tb on"><div class="dot">录</div>记录</div><div class="tb"><div class="dot">我</div>我的</div></div>
+      <div class="tabbar"><div class="tb"><div class="dot"><svg width="26" height="26" viewBox="0 0 48 48" fill="none" stroke="#8a7a63" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="24" r="15"/><rect x="19.5" y="19.5" width="9" height="9" rx="1.4"/></svg></div>测算</div><div class="tb"><div class="dot"><svg width="26" height="26" viewBox="0 0 48 48" fill="none" stroke="#8a7a63" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M24 7 L27.4 20.6 L41 24 L27.4 27.4 L24 41 L20.6 27.4 L7 24 L20.6 20.6 Z"/></svg></div>运势</div><div class="tb on"><div class="dot"><svg width="26" height="26" viewBox="0 0 48 48" fill="none" stroke="#e8c477" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="13" y="9" width="22" height="30" rx="3"/><line x1="18" y1="17" x2="30" y2="17"/><line x1="18" y1="23" x2="30" y2="23"/><line x1="18" y1="29" x2="26" y2="29"/></svg></div>记录</div><div class="tb"><div class="dot"><svg width="26" height="26" viewBox="0 0 48 48" fill="none" stroke="#8a7a63" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="18" r="6.5"/><path d="M13 39 C13 31 35 31 35 39"/></svg></div>我的</div></div>
     </div>
 
     <!-- 我的 -->
@@ -194,12 +194,12 @@
 
         <div class="disc">命理测算 · 趣味参考，仅供娱乐</div>
       </div>
-      <div class="tabbar"><div class="tb"><div class="dot">测</div>测算</div><div class="tb"><div class="dot">运</div>运势</div><div class="tb"><div class="dot">录</div>记录</div><div class="tb on"><div class="dot">我</div>我的</div></div>
+      <div class="tabbar"><div class="tb"><div class="dot"><svg width="26" height="26" viewBox="0 0 48 48" fill="none" stroke="#8a7a63" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="24" r="15"/><rect x="19.5" y="19.5" width="9" height="9" rx="1.4"/></svg></div>测算</div><div class="tb"><div class="dot"><svg width="26" height="26" viewBox="0 0 48 48" fill="none" stroke="#8a7a63" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M24 7 L27.4 20.6 L41 24 L27.4 27.4 L24 41 L20.6 27.4 L7 24 L20.6 20.6 Z"/></svg></div>运势</div><div class="tb"><div class="dot"><svg width="26" height="26" viewBox="0 0 48 48" fill="none" stroke="#8a7a63" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="13" y="9" width="22" height="30" rx="3"/><line x1="18" y1="17" x2="30" y2="17"/><line x1="18" y1="23" x2="30" y2="23"/><line x1="18" y1="29" x2="26" y2="29"/></svg></div>记录</div><div class="tb on"><div class="dot"><svg width="26" height="26" viewBox="0 0 48 48" fill="none" stroke="#e8c477" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="18" r="6.5"/><path d="M13 39 C13 31 35 31 35 39"/></svg></div>我的</div></div>
     </div>
   </div>
 
   <div class="note">
-    说明：本预览与代码实现一致（同色值、同结构）。可直接用微信开发者工具打开 <code>miniprogram/</code> 目录运行。<br/>
+    说明：本预览与代码实现一致（同色值、同结构、同金线图标）。可直接用微信开发者工具打开 <code>miniprogram/</code> 目录运行。<br/>
     相比原 3 Tab（测算/我的/会员）：会员降级为「我的」内二级入口，新增「运势」作为日活留存钩子，首页改为聚合卡片流（大 CTA + 体系宫格 + 最近测算）。
   </div>
 </body>
