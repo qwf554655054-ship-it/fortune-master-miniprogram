@@ -94,6 +94,41 @@ export LLM_MODEL="your-model"
 
 未配置时自动回退到规则模板解读，功能完全可用。
 
+## 本地输出路径配置（禁止写入 C 盘）
+
+所有**缓存 / 日志 / 临时文件 / 构建产物**都写入「项目本地目录」或「用户指定的其他磁盘路径」，**绝不写入 C 盘 `AppData` / `Temp` / `ProgramData`**。配置入口：
+
+- **`wb.config.json`** — 明确的输出路径配置项：
+
+  | 配置项 | 含义 | 默认 |
+  |---|---|---|
+  | `outputRoot` | 所有本地输出的根目录 | `.wb-output`（项目内） |
+  | `dirs.cache` | npm 缓存（npm 日志 `_logs` 也在此） | `cache` |
+  | `dirs.logs` | 服务 / 构建日志 | `logs` |
+  | `dirs.temp` | 任务级临时文件（脚本退出自动清理） | `tmp` |
+  | `dirs.build` | 构建产物 `dist` | `dist` |
+
+- **环境变量 `WB_OUTPUT_ROOT`** — 覆盖 `outputRoot` 为其他磁盘路径，从而彻底不占用 C 盘。例如：
+
+  ```bash
+  export WB_OUTPUT_ROOT="F:/wb-output/fortune-master"
+  ./deploy.sh          # 缓存/日志/临时全部落到 F 盘
+  ```
+
+- **生效机制**：
+  - `deploy.sh` / `update.sh` 运行时会通过 `tools/wb-paths.js` 注入 `npm_config_cache`、`TEMP`、`WB_LOG_DIR`、`WB_BUILD_DIR` 等环境变量，并把 `npm install` 的 `--cache` 指向本地；脚本末尾 `trap` 会自动清理本次任务的临时目录。
+  - 项目根 `.npmrc` 把 npm `cache` 重定向到 `.wb-output/cache`，因此**即使你直接在终端 `npm install`**（不经脚本），缓存也不会落到 C 盘 `AppData`。
+  - `server.js` 的日志经 `tools/logger.js` 写入 `.wb-output/logs/app.log`（同时镜像到控制台），绝不写 C 盘。
+  - `tools/build-demo.js` 在加载 esbuild 前注入 `TEMP` 重定向，构建临时文件不写 C 盘；构建产物目录由 `WB_BUILD_DIR` / `dirs.build` 决定。
+
+- **一键清理**（删除缓存 + 日志 + 临时，不影响源码）：
+
+  ```bash
+  ./clean.sh          # 或 PowerShell:  .\clean.ps1
+  ```
+
+> 一句话：默认全部落在项目内的 `.wb-output/`（已被 `.gitignore` 忽略）；设了 `WB_OUTPUT_ROOT` 就全部挪到其他盘。C 盘系统目录不再产生任何垃圾。
+
 ## 目录结构
 
 ```

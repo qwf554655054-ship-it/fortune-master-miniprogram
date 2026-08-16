@@ -8,6 +8,11 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const { handleApi } = require('./src/routes/api');
+const logger = require('./tools/logger');
+
+// 未捕获异常统一写入项目本地日志（绝不落 C 盘）
+process.on('uncaughtException', (e) => logger.error('uncaughtException:', e));
+process.on('unhandledRejection', (e) => logger.error('unhandledRejection:', e));
 
 const PORT = process.env.PORT || 3000;
 const PUBLIC_DIR = path.join(__dirname, 'public');
@@ -55,7 +60,7 @@ const server = http.createServer((req, res) => {
 
 if (require.main === module) {
   server.listen(PORT, () => {
-    console.log(`命理测算服务已启动: http://localhost:${PORT}`);
+    logger.log(`命理测算服务已启动: http://localhost:${PORT}`);
   });
 }
 

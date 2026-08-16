@@ -1,18 +1,23 @@
 'use strict';
 /**
- * 构建纯静态演示站 dist/：
+ * 构建纯静态演示站：
  *  1) 用 esbuild 把测算引擎（13 体系 + 规则解读）打成浏览器可运行的 engine.js
  *     - 把 Node 内置 fs/path/process 别名替换为浏览器桩（知识层不会被调用）
  *  2) 复制 public/ 的 index.html / style.css / app.js
  *  3) 注入 engine.js + shim.js 脚本
  *  4) 手写 shim.js：拦截所有 /api/* fetch 请求，转成本地计算
+ *
+ * 输出目录由 wb.config.json 的 build 项 / 环境变量 WB_BUILD_DIR 决定（默认 dist，项目本地）。
+ * 在 require esbuild 之前注入 TEMP 重定向，确保 esbuild 的临时文件不写入 C 盘。
  */
+const path = require('path');
+const wb = require('./wb-paths');
+const P = wb.applyToProcess(wb.ensureDirs(wb.resolve(wb.loadConfig())));
 const esbuild = require('esbuild');
 const fs = require('fs');
-const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..');
-const DIST = path.join(ROOT, 'dist');
+const DIST = P.BUILD_DIR;
 
 const SHIM = `(function () {
   if (window.__fortuneShim) return;

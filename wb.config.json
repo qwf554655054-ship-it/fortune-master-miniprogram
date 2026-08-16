@@ -1,0 +1,16 @@
+{
+  "outputRoot": ".wb-output",
+  "dirs": {
+    "cache": "cache",
+    "logs": "logs",
+    "temp": "tmp",
+    "build": "dist"
+  },
+  "description": {
+    "outputRoot": "所有本地输出的根目录。可用环境变量 WB_OUTPUT_ROOT 覆盖为其他磁盘路径（例如 F:\\wb-output\\fortune-master），从而彻底不占用 C 盘。",
+    "cache": "npm 缓存目录（npm 日志 _logs 也落在其中）。已通过 .npmrc 与 npm_config_cache 双重重定向，禁止写入 C 盘 AppData。",
+    "logs": "服务与构建日志目录，绝不写入 C 盘。",
+    "temp": "任务过程中产生的临时文件目录；运行脚本会在退出时自动清理。",
+    "build": "构建产物 dist 目录（项目本地，已被 .gitignore 忽略）。"
+  }
+}
